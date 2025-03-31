@@ -3,29 +3,46 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/User');
 require('dotenv').config();
 
+const callbackURL = process.env.GOOGLE_CALLBACK_URL;
+
+if (!callbackURL) {
+  console.error("❌ GOOGLE_CALLBACK_URL is not defined in environment variables.");
+  process.exit(1); // Stop the server if this critical variable is missing
+}
+
+console.log("✅ Using Google OAuth Callback URL:", callbackURL);
+
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: '/auth/google/callback', // The callback URL after Google authentication
+      callbackURL, // Dynamically set callback URL from env
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
         let user = await User.findOne({ googleId: profile.id });
 
         if (!user) {
-          const existingUser = await User.findOne({ email: profile.emails[0].value });
+          const email = profile.emails?.[0]?.value;
 
-          if (existingUser) {
-            console.error(`⚠️ Duplicate email detected: ${profile.emails[0].value}`);
-            return done(null, existingUser);
+          if (!email) {
+            console.error("❌ No email found in Google profile.");
+            return done(null, false, { message: "Email not found in Google profile" });
           }
 
+          const existingUser = await User.findOne({ email });
+
+          if (existingUser) {
+            console.warn(`⚠️ Email already exists: ${email}`);
+            return done(null, existingUser); // Use existing user
+          }
+
+          // Create a new user
           user = new User({
             googleId: profile.id,
             name: profile.displayName,
-            email: profile.emails[0].value,
+            email: email,
           });
 
           await user.save();
@@ -40,11 +57,12 @@ passport.use(
   )
 );
 
-// Serialize and Deserialize User
+// Serialize user to session
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
 
+// Deserialize user from session
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await User.findById(id);
@@ -55,6 +73,5 @@ passport.deserializeUser(async (id, done) => {
     done(error, null);
   }
 });
-
 
 module.exports = passport;
