@@ -9,10 +9,13 @@ function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+
   useEffect(() => {
+    const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+  
     const fetchUser = async () => {
       try {
-        const response = await fetch('https://upscpath.railway.internal:5000/auth/me', {
+        const response = await fetch(`${backendURL}/auth/me`, {
           credentials: 'include',
         });
         if (response.ok) {
@@ -26,8 +29,9 @@ function App() {
       }
     };
     fetchUser();
-  }, []);
-
+  }, []); // ✅ Empty dependency array (no warning)
+   // ✅ Add backendURL to dependencies
+  
   if (loading) return <LoadingSpinner />;
 
   return (

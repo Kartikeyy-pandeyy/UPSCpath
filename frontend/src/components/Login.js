@@ -4,8 +4,10 @@ import { FaGoogle, FaBookReader } from 'react-icons/fa';
 import { motion } from 'framer-motion'; // For animations
 
 const Login = () => {
+  const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
   const handleLogin = () => {
-    window.location.href = 'https://upscpath.railway.internal:5000/auth/google';
+    window.location.href = `${backendURL}/auth/google`;
   };
 
   // Animation variants
@@ -50,38 +52,25 @@ const Login = () => {
         </motion.button>
 
         <div className="features">
-          <motion.div
-            className="feature-item"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-          >
-            <span className="feature-icon">📚</span>
-            <span>Comprehensive Study Material</span>
-          </motion.div>
-          <motion.div
-            className="feature-item"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-          >
-            <span className="feature-icon">⚡</span>
-            <span>AI-Powered Summaries</span>
-          </motion.div>
-          <motion.div
-            className="feature-item"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-          >
-            <span className="feature-icon">🎯</span>
-            <span>Exam-Focused Content</span>
-          </motion.div>
+          {[
+            { icon: '📚', text: 'Comprehensive Study Material', delay: 0.2 },
+            { icon: '⚡', text: 'AI-Powered Summaries', delay: 0.4 },
+            { icon: '🎯', text: 'Exam-Focused Content', delay: 0.6 }
+          ].map(({ icon, text, delay }) => (
+            <motion.div
+              key={text}
+              className="feature-item"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay, duration: 0.5 }}
+            >
+              <span className="feature-icon">{icon}</span>
+              <span>{text}</span>
+            </motion.div>
+          ))}
         </div>
 
-        <p className="footer-text">
-          Made by Kartikey Pandey
-        </p>
+        <p className="footer-text">Made by Kartikey Pandey</p>
       </motion.div>
     </div>
   );

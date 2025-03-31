@@ -10,6 +10,8 @@ const Dashboard = ({ user }) => {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
   const handleSummarize = async () => {
     if (!topic.trim()) {
       console.error("Error: Topic is empty!");
@@ -18,7 +20,7 @@ const Dashboard = ({ user }) => {
 
     setLoading(true);
     try {
-      const { data } = await axios.post('/summary/summarize', { text: topic });
+      const { data } = await axios.post(`${backendURL}/summary/summarize`, { text: topic });
       let formattedSummary = data.summary.replace(/^Summarize the following.*?\n\n"/, "");
       const bulletPoints = formattedSummary.split("- ").filter(point => point.trim() !== "");
       setSummary(bulletPoints);
@@ -30,7 +32,7 @@ const Dashboard = ({ user }) => {
   };
 
   const handleLogout = () => {
-    window.location.href = 'https://upscpath.railway.internal:5000/auth/logout';
+    window.location.href = `${backendURL}/auth/logout`;
   };
 
   const handleKeyDown = (e) => {
@@ -55,6 +57,12 @@ const Dashboard = ({ user }) => {
     hover: { scale: 1.05 },
     tap: { scale: 0.95 },
   };
+
+  const suggestedTopics = [
+    'Indian Constitution',
+    'Climate Change in India',
+    'Economic Reforms',
+  ];
 
   return (
     <motion.div
@@ -170,9 +178,11 @@ const Dashboard = ({ user }) => {
             <div className="suggested-topics">
               <p>Suggested Topics:</p>
               <div className="topic-buttons">
-                <button onClick={() => setTopic('Indian Constitution')}>Indian Constitution</button>
-                <button onClick={() => setTopic('Climate Change in India')}>Climate Change</button>
-                <button onClick={() => setTopic('Economic Reforms')}>Economic Reforms</button>
+                {suggestedTopics.map((topicName) => (
+                  <button key={topicName} onClick={() => setTopic(topicName)}>
+                    {topicName}
+                  </button>
+                ))}
               </div>
             </div>
           </section>
