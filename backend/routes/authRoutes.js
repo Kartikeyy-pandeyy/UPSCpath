@@ -25,13 +25,15 @@ router.get('/logout', (req, res) => {
   });
 });
 
-// Get current user
 router.get('/me', (req, res) => {
+  console.log("Session user:", req.user); // ✅ Debugging line to check session data
+
   if (req.isAuthenticated()) {
-    res.json(req.user);
+    return res.json(req.user);
   } else {
-    res.status(401).json({ error: 'Not authenticated' });
+    return res.status(401).json({ error: 'Not authenticated' });
   }
 });
+
 
 module.exports = router;
