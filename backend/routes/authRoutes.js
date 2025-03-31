@@ -5,16 +5,16 @@ const router = express.Router();
 // Google OAuth login
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-// Google OAuth callback
 router.get(
   '/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
-    // Use the frontend URL from environment variables to redirect
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000'; // Default to localhost if not set
+    // Dynamically set the frontend URL based on environment
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     res.redirect(`${frontendUrl}/dashboard`);
   }
 );
+
 
 // Logout
 router.get('/logout', (req, res) => {

@@ -8,19 +8,18 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL || 'https://upscpath-production.up.railway.app/auth/google/callback', // Full callback URL for production
+      callbackURL: '/auth/google/callback', // The callback URL after Google authentication
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
         let user = await User.findOne({ googleId: profile.id });
 
         if (!user) {
-          // ✅ Check if email already exists before saving
           const existingUser = await User.findOne({ email: profile.emails[0].value });
 
           if (existingUser) {
             console.error(`⚠️ Duplicate email detected: ${profile.emails[0].value}`);
-            return done(null, existingUser); // Return existing user instead of erroring
+            return done(null, existingUser);
           }
 
           user = new User({
@@ -41,6 +40,7 @@ passport.use(
   )
 );
 
+// Serialize and Deserialize User
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
@@ -55,5 +55,6 @@ passport.deserializeUser(async (id, done) => {
     done(error, null);
   }
 });
+
 
 module.exports = passport;
