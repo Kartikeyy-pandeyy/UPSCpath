@@ -12,13 +12,17 @@ connectDB();
 const app = express();
 app.use(express.json());
 
-// ✅ CORS setup to allow frontend requests
+const cors = require('cors');
+
 app.use(
   cors({
-    origin: 'http://localhost:3000',
-    credentials: true,
+    origin: ['http://localhost:3000', 'https://upscpath.netlify.app'], // Allow local & production frontend
+    credentials: true, // Allow credentials (cookies/sessions)
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Explicitly allow HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allow necessary headers
   })
 );
+
 
 // ✅ Improved session store handling
 try {

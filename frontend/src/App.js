@@ -12,7 +12,7 @@ function App() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch('https://upscpath-production.up.railway.app:5000/auth/me', {
+        const response = await fetch('http://upscpath.railway.internal:5000/auth/me', {
           credentials: 'include',
         });
         if (response.ok) {
