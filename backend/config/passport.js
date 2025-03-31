@@ -8,7 +8,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL || 'https://upscpath-production.up.railway.app/auth/google/callback',  // Absolute URL for production
+      callbackURL: process.env.GOOGLE_CALLBACK_URL || 'https://upscpath-production.up.railway.app/auth/google/callback', // Full callback URL for production
     },
     async (accessToken, refreshToken, profile, done) => {
       try {

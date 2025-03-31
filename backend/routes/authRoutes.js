@@ -10,7 +10,9 @@ router.get(
   '/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
-    res.redirect('http://localhost:3000/dashboard');
+    // Use the frontend URL from environment variables to redirect
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000'; // Default to localhost if not set
+    res.redirect(`${frontendUrl}/dashboard`);
   }
 );
 
@@ -18,7 +20,8 @@ router.get(
 router.get('/logout', (req, res) => {
   req.logout((err) => {
     if (err) return res.status(500).json({ error: 'Logout failed' });
-    res.redirect('http://localhost:3000/');
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000'; // Default to localhost if not set
+    res.redirect(frontendUrl);
   });
 });
 
