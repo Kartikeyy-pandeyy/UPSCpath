@@ -30,7 +30,7 @@ const Dashboard = ({ user }) => {
   };
 
   const handleLogout = () => {
-    window.location.href = 'http://upscpath.railway.internal:5000/auth/logout';
+    window.location.href = 'https://upscpath.railway.internal:5000/auth/logout';
   };
 
   const handleKeyDown = (e) => {
