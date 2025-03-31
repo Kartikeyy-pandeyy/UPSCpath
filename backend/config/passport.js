@@ -3,11 +3,12 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/User');
 require('dotenv').config();
 
-const callbackURL = process.env.GOOGLE_CALLBACK_URL;
+// Ensure callback URL is correctly set from environment variables
+const callbackURL = process.env.GOOGLE_CALLBACK_URL || 'https://upscpath-production.up.railway.app/auth/google/callback';
 
-if (!callbackURL) {
-  console.error("❌ GOOGLE_CALLBACK_URL is not defined in environment variables.");
-  process.exit(1); // Stop the server if this critical variable is missing
+if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+  console.error("❌ Google OAuth credentials are missing in environment variables.");
+  process.exit(1);
 }
 
 console.log("✅ Using Google OAuth Callback URL:", callbackURL);
@@ -17,7 +18,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL, // Dynamically set callback URL from env
+      callbackURL, // Use dynamically set callback URL from env
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
