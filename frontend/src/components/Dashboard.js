@@ -30,7 +30,7 @@ const Dashboard = ({ user }) => {
   };
 
   const handleLogout = () => {
-    window.location.href = 'http://localhost:5000/auth/logout';
+    window.location.href = 'https://upscpath-production.up.railway.app:5000/auth/logout';
   };
 
   const handleKeyDown = (e) => {

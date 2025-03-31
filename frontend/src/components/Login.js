@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'; // For animations
 
 const Login = () => {
   const handleLogin = () => {
-    window.location.href = 'http://localhost:5000/auth/google';
+    window.location.href = 'https://upscpath-production.up.railway.app:5000/auth/google';
   };
 
   // Animation variants
