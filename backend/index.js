@@ -15,17 +15,19 @@ connectDB();
 const app = express();
 app.use(express.json());
 
-// ✅ CORS Configuration (Allow Frontend Access with Credentials)
 app.use(
   cors({
-    origin: ['http://localhost:3000', 'https://upscpath.netlify.app'], // Allowed Frontend URLs
-    credentials: true, // ✅ Allow cookies and authentication headers
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    origin: (origin, callback) => {
+      const allowedOrigins = ['http://localhost:3000', 'https://upscpath.netlify.app'];
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
   })
 );
-
-// ✅ Session Configuration (Improved for Production & Cross-Origin Support)
 app.use(
   session({
     secret: process.env.SESSION_SECRET || 'default_secret',
@@ -33,12 +35,12 @@ app.use(
     saveUninitialized: false,
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URI,
-      ttl: 14 * 24 * 60 * 60, // Sessions last for 14 days
+      ttl: 14 * 24 * 60 * 60,
     }),
     cookie: {
-      secure: process.env.NODE_ENV === 'production', // Secure cookies in production
-      httpOnly: true, // Prevent XSS attacks
-      sameSite: 'None', // ✅ Allow cross-origin requests
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      sameSite: 'None',
     },
   })
 );

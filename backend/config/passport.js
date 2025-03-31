@@ -58,9 +58,21 @@ passport.use(
   )
 );
 
-// Serialize user to session
 passport.serializeUser((user, done) => {
+  console.log('Serializing user:', user.id);
   done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    console.log('Deserialized user:', user);
+    if (!user) return done(null, false);
+    done(null, user);
+  } catch (error) {
+    console.error('Error in deserializing user:', error);
+    done(error, null);
+  }
 });
 
 // Deserialize user from session
