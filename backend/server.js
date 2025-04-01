@@ -21,17 +21,26 @@ app.use(
   })
 );
 
+const sessionStore = MongoStore.create({
+  mongoUrl: process.env.MONGO_URI,
+  collectionName: 'sessions',
+});
+
+sessionStore.on('error', (error) => {
+  console.error('Session store error:', error);
+});
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
+    store: sessionStore,
     cookie: {
-      secure: true, // HTTPS in production
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
-      sameSite: 'none', // Cross-site cookies
-      httpOnly: true, // Prevent client-side access
+      secure: true,
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: 'none',
+      httpOnly: true,
     },
   })
 );

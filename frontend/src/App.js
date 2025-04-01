@@ -14,10 +14,16 @@ function App() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch(`${backendURL}/auth/me`, { credentials: 'include' });
+        console.log('Fetching user from:', backendURL);
+        const response = await fetch(`${backendURL}/auth/me`, { 
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' }, // Explicitly set headers
+        });
         if (response.ok) {
           const data = await response.json();
           setUser(data);
+        } else {
+          console.log('Response status:', response.status);
         }
       } catch (error) {
         console.error('Error:', error);
@@ -26,8 +32,8 @@ function App() {
       }
     };
     fetchUser();
-    
   }, []);
+    
   console.log('Fetching user from:', backendURL);
   if (loading) return <LoadingSpinner />;
 
