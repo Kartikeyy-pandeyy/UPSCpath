@@ -1,0 +1,222 @@
+/* ExamPattern.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --secondary: #f97316;
+  --secondary-hover: #ea580c;
+  --neutral-50: #f8fafc;
+  --neutral-100: #f1f5f9;
+  --neutral-200: #e2e8f0;
+  --neutral-700: #334155;
+  --neutral-900: #0f172a;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.1);
+  --radius: 12px;
+  --transition: 0.3s ease;
+}
+
+.exam-pattern-wrapper {
+  display: grid;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.exam-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.exam-intro {
+  background: var(--neutral-50);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.intro-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.exam-text {
+  font-size: 0.875rem;
+  color: var(--neutral-700);
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+.exam-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.card-text {
+  font-size: 0.875rem;
+  color: var(--neutral-700);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.exam-details {
+  display: grid;
+  gap: 1rem;
+}
+
+.exam-details h4 {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--neutral-900);
+  margin-bottom: 0.5rem;
+}
+
+.exam-details p,
+.exam-details ul {
+  font-size: 0.875rem;
+  color: var(--neutral-700);
+  line-height: 1.5;
+}
+
+.exam-details ul {
+  padding-left: 1.25rem;
+  list-style-type: disc;
+}
+
+.exam-details li {
+  margin-bottom: 0.5rem;
+}
+
+.exam-details ul ul {
+  padding-left: 1.5rem;
+  list-style-type: circle;
+  margin-top: 0.5rem;
+}
+
+.additional-info {
+  background: var(--neutral-100);
+  padding: 1rem;
+  border-radius: 8px;
+  font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 479px) {
+  .exam-pattern-wrapper {
+    padding: 0.75rem;
+    gap: 1rem;
+  }
+
+  .exam-title {
+    font-size: 1.5rem;
+  }
+
+  .exam-intro,
+  .exam-card {
+    padding: 1rem;
+  }
+
+  .intro-title,
+  .card-title {
+    font-size: 1.125rem;
+  }
+
+  .exam-text,
+  .card-text,
+  .exam-details p,
+  .exam-details ul {
+    font-size: 0.8125rem;
+  }
+
+  .exam-details h4 {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 480px) and (max-width: 767px) {
+  .exam-title {
+    font-size: 1.75rem;
+  }
+
+  .exam-intro,
+  .exam-card {
+    padding: 1.25rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .exam-pattern-wrapper {
+    padding: 1.5rem;
+    gap: 2rem;
+  }
+
+  .exam-title {
+    font-size: 2rem;
+  }
+
+  .exam-intro,
+  .exam-card {
+    padding: 2rem;
+  }
+
+  .intro-title,
+  .card-title {
+    font-size: 1.5rem;
+  }
+
+  .exam-text,
+  .card-text,
+  .exam-details p,
+  .exam-details ul {
+    font-size: 1rem;
+  }
+
+  .exam-details h4 {
+    font-size: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .exam-pattern-wrapper {
+    padding: 2rem;
+  }
+
+  .exam-title {
+    font-size: 2.25rem;
+  }
+
+  .exam-intro,
+  .exam-card {
+    padding: 2.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .exam-pattern-wrapper {
+    padding: 3rem;
+  }
+
+  .exam-title {
+    font-size: 2.5rem;
+  }
+
+  .intro-title,
+  .card-title {
+    font-size: 1.75rem;
+  }
+}

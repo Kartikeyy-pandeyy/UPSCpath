@@ -1,0 +1,330 @@
+/* Define CSS custom properties for reusability */
+:root {
+  --primary: #2563eb;
+  --primary-light: #3b82f6;
+  --primary-dark: #1d4ed8;
+  --success: #10b981;
+  --success-dark: #0d9466;
+  --danger: #ef4444;
+  --danger-dark: #dc2626;
+  --warning: #f59e0b;
+  --text-dark: #0f172a;
+  --text-medium: #334155;
+  --text-light: #64748b;
+  --border-light: #e2e8f0;
+  --bg-light: #f8fafc;
+  --bg-white: #ffffff;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --radius-md: 8px;
+  --radius-lg: 20px; /* Added for bubble effect */
+  --transition: 0.2s ease-out;
+}
+
+/* Reset and base styles for performance */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.summarize-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  will-change: transform;
+}
+
+/* Typography with fluid scaling */
+.section-title {
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
+  font-weight: 800;
+  text-align: center;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  line-height: 1.2;
+}
+
+.section-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  color: var(--text-light);
+  text-align: center;
+  font-weight: 500;
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+}
+
+/* Input container with grid for responsiveness */
+.input-container {
+  display: grid;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Input wrapper with optimized transitions */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  background: var(--bg-white);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.input-wrapper:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  color: var(--text-light);
+  font-size: 1rem;
+}
+
+.topic-input {
+  width: 100%;
+  padding: 0.8rem 0.8rem 0.8rem 2.8rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-dark);
+}
+
+.topic-input:focus {
+  outline: none;
+}
+
+.topic-input::placeholder {
+  color: var(--text-light);
+  opacity: 0.7;
+}
+
+/* Button styles with GPU acceleration */
+.summarize-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.9rem 1.5rem;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: var(--bg-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background var(--transition);
+  transform: translateZ(0);
+}
+
+.summarize-btn:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+}
+
+.summarize-btn:not(:disabled):hover {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+}
+
+/* Spinner animation */
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* Summary content with minimal reflow */
+.summary-content {
+  width: 100%;
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  background: var(--bg-light);
+  border: 1px solid var(--border-light);
+  margin-top: 1rem;
+}
+
+.summary-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.summary-line {
+  padding: 0.9rem 1.2rem;
+  font-size: 0.95rem;
+  color: var(--text-medium);
+  line-height: 1.6;
+  background: var(--bg-white);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--primary);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition);
+}
+
+.summary-line:hover {
+  transform: translateX(4px);
+}
+
+/* Action buttons */
+.summary-actions {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+  justify-content: flex-end;
+}
+
+.copy-btn,
+.clear-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.copy-btn {
+  background: var(--success);
+  color: var(--bg-white);
+}
+
+.copy-btn:hover {
+  background: var(--success-dark);
+}
+
+.clear-btn {
+  background: var(--danger);
+  color: var(--bg-white);
+}
+
+.clear-btn:hover {
+  background: var(--danger-dark);
+}
+
+/* Welcome section */
+.welcome-section {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: var(--bg-light);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border-light);
+  text-align: center;
+}
+
+.welcome-text {
+  color: var(--text-medium);
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+/* Suggested topics with dynamic width bubbles */
+.suggested-topics {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 0.5rem;
+}
+
+.suggested-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem; /* Adjusted padding for balance */
+  background: var(--bg-white);
+  color: var(--primary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg); /* Larger radius for bubble look */
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), transform var(--transition);
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap; /* Prevent text wrapping */
+}
+
+.suggested-btn:hover {
+  background: #eff6ff;
+  color: var(--primary-dark);
+  transform: scale(1.05); /* Subtle lift effect */
+  box-shadow: var(--shadow-md);
+}
+
+.bulb-icon {
+  color: var(--warning);
+  font-size: 0.9rem;
+}
+
+/* Error and notification */
+.error-message {
+  color: var(--danger);
+  margin: -1rem 0 1.5rem;
+  font-size: 0.9rem;
+  padding: 0.8rem 1.2rem;
+  background: #fee2e2;
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--danger);
+  animation: shake 0.5s ease-out;
+}
+
+.copied-notification {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--success);
+  color: var(--bg-white);
+  padding: 0.8rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 500;
+  box-shadow: var(--shadow-md);
+  z-index: 100;
+}
+
+/* Animations */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+/* Responsive design */
+@media (min-width: 768px) {
+  .input-container {
+    grid-template-columns: 1fr auto;
+  }
+
+  .summarize-btn {
+    width: auto;
+    min-width: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .summary-actions {
+    flex-direction: column;
+  }
+
+  .copy-btn,
+  .clear-btn {
+    width: 100%;
+  }
+
+  .suggested-btn {
+    padding: 0.5rem 0.8rem; /* Smaller padding for mobile */
+    font-size: 0.85rem;
+  }
+}

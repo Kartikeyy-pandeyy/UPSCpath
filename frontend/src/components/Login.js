@@ -1,3 +1,4 @@
+// Login.jsx
 import React from 'react';
 import './Login.css';
 import { FaGoogle, FaBookReader } from 'react-icons/fa';
@@ -7,26 +8,27 @@ const Login = () => {
   const backendURL = process.env.REACT_APP_BACKEND_URL || 'https://upscpath-production.up.railway.app';
 
   const handleLogin = () => {
-    // Clear any existing session data before initiating new login
     localStorage.clear();
     sessionStorage.clear();
-    
-    // Open Google OAuth in same tab
     window.location.href = `${backendURL}/auth/google`;
   };
 
   const containerVariants = {
-    hidden: { opacity: 0, y: 50 },
+    hidden: { opacity: 0, scale: 0.98 },
     visible: {
       opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: 'easeOut' },
+      scale: 1,
+      transition: { duration: 0.5, ease: 'easeOut' },
     },
   };
 
-  const buttonVariants = {
-    hover: { scale: 1.05, transition: { duration: 0.3 } },
-    tap: { scale: 0.95 },
+  const featureVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.4, ease: 'easeOut' },
+    },
   };
 
   return (
@@ -37,45 +39,49 @@ const Login = () => {
         initial="hidden"
         animate="visible"
       >
-        <div className="logo-container">
-          <FaBookReader className="logo-icon" />
-          <h1>UPSCPath</h1>
+        <div className="login-content">
+          <div className="branding">
+            <FaBookReader className="logo-icon" />
+            <h1>UPSCPath</h1>
+            <p className="subtitle">Your AI-Powered UPSC Companion</p>
+          </div>
+
+          <motion.button
+            className="login-button"
+            onClick={handleLogin}
+            whileHover={{ scale: 1.05, boxShadow: '0 6px 12px rgba(37, 99, 235, 0.2)' }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+          >
+            <FaGoogle className="google-icon" />
+            Sign in with Google
+          </motion.button>
+
+          <div className="features-grid">
+            {[
+              { icon: '📚', text: 'Curated Study Material' },
+              { icon: '⚡', text: 'AI-Driven Insights' },
+              { icon: '🎯', text: 'Targeted Prep' },
+            ].map((feature, index) => (
+              <motion.div
+                key={feature.text}
+                className="feature-card"
+                variants={featureVariants}
+                initial="hidden"
+                animate="visible"
+                transition={{ delay: index * 0.2 }}
+                whileHover={{ y: -4, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}
+              >
+                <span className="feature-icon">{feature.icon}</span>
+                <span className="feature-text">{feature.text}</span>
+              </motion.div>
+            ))}
+          </div>
+
+          <footer className="footer">
+            <p>Crafted with ❤️ by Kartikey Pandey</p>
+          </footer>
         </div>
-        <h2>Your AI-Powered UPSC Companion</h2>
-        <p className="tagline">Smart summarization for efficient exam preparation</p>
-
-        <motion.button
-          className="login-button"
-          onClick={handleLogin}
-          variants={buttonVariants}
-          whileHover="hover"
-          whileTap="tap"
-          aria-label="Continue with Google"
-        >
-          <FaGoogle className="google-icon" />
-          Continue with Google
-        </motion.button>
-
-        <div className="features">
-          {[
-            { icon: '📚', text: 'Comprehensive Study Material', delay: 0.2 },
-            { icon: '⚡', text: 'AI-Powered Summaries', delay: 0.4 },
-            { icon: '🎯', text: 'Exam-Focused Content', delay: 0.6 }
-          ].map(({ icon, text, delay }) => (
-            <motion.div
-              key={text}
-              className="feature-item"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay, duration: 0.5 }}
-            >
-              <span className="feature-icon">{icon}</span>
-              <span>{text}</span>
-            </motion.div>
-          ))}
-        </div>
-
-        <p className="footer-text">Made by Kartikey Pandey</p>
       </motion.div>
     </div>
   );

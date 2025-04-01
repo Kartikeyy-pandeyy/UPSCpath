@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
-import './App.css';
 import LoadingSpinner from './components/LoadingSpinner';
+import './App.css';
 
 const backendURL = process.env.REACT_APP_BACKEND_URL || 'https://upscpath-production.up.railway.app';
 
@@ -21,12 +21,12 @@ function App() {
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          }
+            'Accept': 'application/json',
+          },
         });
 
         console.log('Auth check response status:', response.status);
-        
+
         if (response.ok) {
           const userData = await response.json();
           setUser(userData);
@@ -45,12 +45,10 @@ function App() {
 
     checkAuth();
 
-    // Set up interval to check session validity every 5 minutes
     const intervalId = setInterval(checkAuth, 300000);
     return () => clearInterval(intervalId);
   }, []);
 
-  // Handle route protection
   const ProtectedRoute = ({ children }) => {
     if (loading) return <LoadingSpinner />;
     if (!user && authChecked) {
@@ -65,41 +63,32 @@ function App() {
     <Router>
       <div className="app">
         <Routes>
-          <Route 
-            path="/" 
-            element={user ? <Navigate to="/dashboard" /> : <Login />} 
+          <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Login />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard user={user} setUser={setUser} />
+              </ProtectedRoute>
+            }
           />
-          <Route 
-  path="/dashboard" 
-  element={
-    <ProtectedRoute>
-      <Dashboard user={user} setUser={setUser} />
-    </ProtectedRoute>
-  } 
-/>
-          {/* Handle OAuth callback route */}
-          <Route 
-            path="/oauth-callback" 
-            element={<OAuthCallback />} 
-          />
+          <Route path="/oauth-callback" element={<OAuthCallback />} />
         </Routes>
       </div>
     </Router>
   );
 }
 
-// Component to handle OAuth callback
 function OAuthCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
     const completeAuth = async () => {
       try {
-        // Verify authentication after callback
         const response = await fetch(`${backendURL}/auth/me`, {
-          credentials: 'include'
+          credentials: 'include',
         });
-        
+
         if (response.ok) {
           navigate('/dashboard');
         } else {

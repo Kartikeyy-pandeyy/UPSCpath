@@ -1,0 +1,233 @@
+.faq-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.faq-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.faq-search-container {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto 1.5rem;
+  width: 100%;
+}
+
+.faq-search-input {
+  width: 100%;
+  padding: 0.875rem 1.25rem 0.875rem 2.75rem;
+  border: 2px solid var(--neutral-200);
+  border-radius: 50px;
+  font-size: 1rem;
+  transition: var(--transition);
+  background: white;
+  color: var(--neutral-900);
+}
+
+.faq-search-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--neutral-700);
+}
+
+.faq-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.faq-item {
+  background: white;
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  border-left: 4px solid var(--primary);
+}
+
+.faq-item:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.faq-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.faq-item h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--neutral-900);
+  flex: 1;
+}
+
+.faq-category {
+  background: var(--primary-light);
+  color: var(--primary);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.faq-item p {
+  font-size: 0.9375rem;
+  color: var(--neutral-700);
+  line-height: 1.7;
+}
+
+.no-results {
+  text-align: center;
+  padding: 2rem;
+  color: var(--neutral-700);
+  font-style: italic;
+  background: var(--neutral-50);
+  border-radius: var(--radius);
+}
+
+/* Responsive Design */
+@media (max-width: 767px) {
+  .faq-container {
+    padding: 1rem;
+  }
+
+  .faq-title {
+    font-size: 1.5rem;
+  }
+
+  .faq-search-container {
+    margin-bottom: 1rem;
+  }
+
+  .faq-search-input {
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    font-size: 0.9375rem;
+  }
+
+  .faq-item {
+    padding: 1.25rem;
+  }
+
+  .faq-item h3 {
+    font-size: 1rem;
+  }
+
+  .faq-item p {
+    font-size: 0.875rem;
+  }
+
+  .faq-header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .faq-category {
+    align-self: flex-start;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .faq-container {
+    padding: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .faq-list {
+    grid-template-columns: 1fr;
+  }
+}
+/* Previous styles remain the same, add these new styles at the end */
+
+.category-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.category-tag {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: var(--transition);
+  border: 1px solid var(--neutral-200);
+  background: white;
+  color: var(--neutral-700);
+}
+
+.category-tag:hover {
+  background: var(--neutral-100);
+}
+
+.category-tag.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.faq-category {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+/* Category-specific colors */
+.faq-category.eligibility {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.faq-category.attempts {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.faq-category.preparation {
+  background: rgba(139, 92, 246, 0.1);
+  color: #8b5cf6;
+}
+
+.faq-category.exam-pattern {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+  .category-filter {
+    justify-content: flex-start;
+    margin-bottom: 1rem;
+  }
+  
+  .category-tag {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.6875rem;
+  }
+}

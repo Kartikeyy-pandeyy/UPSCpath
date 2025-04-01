@@ -14,7 +14,7 @@ router.post('/summarize', async (req, res) => {
       'https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct-v0.1',
       {
         inputs: `Summarize the following topic in bullet points:\n\n${text}`,
-        parameters: { max_length: 100, min_length: 50 },
+        parameters: { max_length: 10, min_length: 1 },
       },
       {
         headers: {

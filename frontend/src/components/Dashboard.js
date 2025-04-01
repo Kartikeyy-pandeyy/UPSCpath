@@ -1,92 +1,43 @@
-import React, { useState, useEffect } from 'react';
-import api from '../services/api';
-import './Dashboard.css';
-import { 
-  FaBook, 
-  FaSignOutAlt, 
-  FaSpinner, 
-  FaCopy, 
-  FaTrash,
-  FaClipboardList,
-  FaGraduationCap,
-  FaQuestionCircle
-} from 'react-icons/fa';
-import { motion } from 'framer-motion';
+// Dashboard.jsx
+import React, { useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { FaSignOutAlt, FaSpinner, FaBookReader } from 'react-icons/fa';
+import './Dashboard.css';
+import AboutUPSC from './AboutUPSC';
+import ExamPattern from './ExamPattern';
+import StudyMaterial from './StudyMaterial';
+import SummarizeTopic from './SummarizeTopic';
+import FAQ from './FAQ';
+
+const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
 
 const Dashboard = ({ user, setUser }) => {
-  const [topic, setTopic] = useState('');
-  const [summary, setSummary] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [authChecking, setAuthChecking] = useState(true);
-  const [activeTab, setActiveTab] = useState('summary');
+  const [activeTab, setActiveTab] = useState('summarize');
   const navigate = useNavigate();
 
-  const backendURL = process.env.REACT_APP_BACKEND_URL || 'https://upscpath-production.up.railway.app';
-
-  // Verify authentication status on mount
-  useEffect(() => {
-    const verifyAuth = async () => {
-      try {
-        const response = await fetch(`${backendURL}/auth/me`, {
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        
-        if (!response.ok) {
-          throw new Error('Not authenticated');
-        }
-
-        const userData = await response.json();
-        
-        if (!userData || !userData.id) {
-          throw new Error('Invalid user data');
-        }
-
-        if (!user || user.id !== userData.id) {
-          setUser(userData);
-        }
-      } catch (error) {
-        if (user) {
-          setUser(null);
-        }
-        navigate('/');
-      } finally {
-        setAuthChecking(false);
-      }
-    };
-
-    verifyAuth();
-  }, [backendURL, navigate, setUser, user]);
-
-  const handleSummarize = async () => {
-    if (!topic.trim()) return;
-
-    setLoading(true);
+  const verifyAuth = useCallback(async () => {
     try {
-      const { data } = await api.post('/summary/summarize', { text: topic });
-      if (data?.summary) {
-        let formattedSummary = data.summary.replace(/^Summarize the following.*?\n\n"/, "");
-        const bulletPoints = formattedSummary.split("- ").filter(point => point.trim() !== "");
-        setSummary(bulletPoints);
-        setActiveTab('summary');
-      } else {
-        setSummary(['No summary returned from the server.']);
-      }
-    } catch (error) {
-      if (error.response?.status === 401) {
-        setUser(null);
-        navigate('/');
-      } else {
-        setSummary(['Error fetching summary. Please try again.']);
-      }
+      const response = await fetch(`${backendURL}/auth/me`, {
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!response.ok) throw new Error('Not authenticated');
+      const userData = await response.json();
+      if (!userData?.id) throw new Error('Invalid user data');
+      setUser((prevUser) => (prevUser?.id !== userData.id ? userData : prevUser));
+    } catch {
+      setUser(null);
+      navigate('/');
     } finally {
-      setLoading(false);
+      setAuthChecking(false);
     }
-  };
+  }, [navigate, setUser]);
+
+  useEffect(() => {
+    verifyAuth();
+  }, [verifyAuth]);
 
   const handleLogout = async () => {
     try {
@@ -94,46 +45,39 @@ const Dashboard = ({ user, setUser }) => {
         method: 'GET',
         credentials: 'include',
       });
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
       setUser(null);
       localStorage.clear();
       sessionStorage.clear();
       navigate('/');
-    } catch (error) {
-      navigate('/');
     }
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') handleSummarize();
-  };
-
-  const handleCopy = () => {
-    const text = summary.join('\n- ');
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  const tabs = [
+    { name: 'about', label: 'About UPSC' },
+    { name: 'exam', label: 'Exam Pattern' },
+    
+    { name: 'summarize', label: 'Summarize Topic' },
+    { name: 'material', label: 'Study Material' },
+    { name: 'faq', label: 'FAQ' },
+  ];
 
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.5 } },
+    visible: { opacity: 1, transition: { duration: 0.5, ease: 'easeOut' } },
   };
 
-  const buttonVariants = {
-    hover: { scale: 1.05 },
-    tap: { scale: 0.95 },
+  const contentVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
   };
-
-  const suggestedTopics = [
-    'Indian Constitution',
-    'Climate Change in India',
-    'Economic Reforms',
-  ];
 
   if (authChecking) {
     return (
       <div className="loading-container">
-        <FaSpinner className="spinner" /> Loading dashboard...
+        <FaSpinner className="spinner" /> Loading Dashboard...
       </div>
     );
   }
@@ -149,217 +93,55 @@ const Dashboard = ({ user, setUser }) => {
     >
       <header className="dashboard-header">
         <div className="header-content">
-          <FaBook className="header-icon" />
-          <div>
-            <h1>Hello, {user?.name}!</h1>
-            <p>Your personalized UPSC preparation hub</p>
+          <div className="header-logo">
+            <FaBookReader className="logo-icon" />
+            <span>UPSCPath</span>
           </div>
+          <h1 className="header-greeting">Welcome, {user.name}</h1>
+          <motion.button
+            className="logout-btn"
+            onClick={handleLogout}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <FaSignOutAlt className="logout-icon" /> Sign Out
+          </motion.button>
         </div>
-        <motion.button
-          className="logout-btn"
-          onClick={handleLogout}
-          variants={buttonVariants}
-          whileHover="hover"
-          whileTap="tap"
-        >
-          <FaSignOutAlt /> Logout
-        </motion.button>
       </header>
 
-      <main className="dashboard-content">
-        <section className="input-section">
-          <h2>Explore a Topic</h2>
-          <div className="input-container">
-            <input
-              type="text"
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="e.g., Indian Polity, Climate Change..."
-              className="topic-input"
-            />
+      <nav className="dashboard-tabs">
+        <div className="tabs-container">
+          {tabs.map((tab) => (
             <motion.button
-              className="summarize-btn"
-              onClick={handleSummarize}
-              disabled={loading}
-              variants={buttonVariants}
-              whileHover="hover"
-              whileTap="tap"
+              key={tab.name}
+              className={`tab-btn ${activeTab === tab.name ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.name)}
+              whileHover={{ y: -3 }}
+              whileTap={{ scale: 0.98 }}
             >
-              {loading ? (
-                <>
-                  <FaSpinner className="spinner" /> Summarizing...
-                </>
-              ) : (
-                'Generate Summary'
-              )}
+              {tab.label}
             </motion.button>
-          </div>
-        </section>
-
-        <div className="dashboard-tabs">
-          <button 
-            className={`tab-btn ${activeTab === 'summary' ? 'active' : ''}`}
-            onClick={() => setActiveTab('summary')}
-          >
-            <FaBook /> Summary
-          </button>
-          <button 
-            className={`tab-btn ${activeTab === 'exam' ? 'active' : ''}`}
-            onClick={() => setActiveTab('exam')}
-          >
-            <FaClipboardList /> Exam Pattern
-          </button>
-          <button 
-            className={`tab-btn ${activeTab === 'material' ? 'active' : ''}`}
-            onClick={() => setActiveTab('material')}
-          >
-            <FaGraduationCap /> Study Material
-          </button>
-          <button 
-            className={`tab-btn ${activeTab === 'faq' ? 'active' : ''}`}
-            onClick={() => setActiveTab('faq')}
-          >
-            <FaQuestionCircle /> FAQs
-          </button>
+          ))}
         </div>
+      </nav>
 
-        {activeTab === 'summary' && (
-          <>
-            {summary.length > 0 ? (
-              <motion.section
-                className="summary-section"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <h2>Summary</h2>
-                <ul className="summary-list">
-                  {summary.map((point, index) => (
-                    <motion.li
-                      key={index}
-                      className="summary-item"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <span className="bullet">●</span>
-                      <span>{point.trim()}</span>
-                    </motion.li>
-                  ))}
-                </ul>
-                <div className="summary-actions">
-                  <motion.button
-                    className="copy-btn"
-                    onClick={handleCopy}
-                    variants={buttonVariants}
-                    whileHover="hover"
-                    whileTap="tap"
-                  >
-                    <FaCopy /> {copied ? 'Copied!' : 'Copy Summary'}
-                  </motion.button>
-                  <motion.button
-                    className="clear-btn"
-                    onClick={() => {
-                      setSummary([]);
-                      setTopic('');
-                    }}
-                    variants={buttonVariants}
-                    whileHover="hover"
-                    whileTap="tap"
-                  >
-                    <FaTrash /> Clear Summary
-                  </motion.button>
-                </div>
-              </motion.section>
-            ) : (
-              <section className="welcome-section">
-                <h2>Get Started</h2>
-                <p>
-                  Enter a UPSC topic above to receive a concise, AI-generated summary tailored for your preparation.
-                </p>
-                <div className="suggested-topics">
-                  <p>Suggested Topics:</p>
-                  <div className="topic-buttons">
-                    {suggestedTopics.map((topicName) => (
-                      <button key={topicName} onClick={() => setTopic(topicName)}>
-                        {topicName}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </section>
-            )}
-          </>
-        )}
-
-        {activeTab === 'exam' && (
-          <section className="content-section">
-            <h2>UPSC Exam Pattern</h2>
-            <div className="content-card">
-              <h3>Preliminary Examination</h3>
-              <p>Objective type questions testing general awareness</p>
-              <ul>
-                <li>Paper I: General Studies</li>
-                <li>Paper II: CSAT (Qualifying)</li>
-              </ul>
-            </div>
-            <div className="content-card">
-              <h3>Main Examination</h3>
-              <p>Descriptive papers testing in-depth knowledge</p>
-              <ul>
-                <li>9 papers including Essay, GS I-IV, Optional Subjects</li>
-              </ul>
-            </div>
-            <div className="content-card">
-              <h3>Personality Test (Interview)</h3>
-              <p>275 marks assessing mental caliber and personality traits</p>
-            </div>
-          </section>
-        )}
-
-        {activeTab === 'material' && (
-          <section className="content-section">
-            <h2>Study Material Resources</h2>
-            <div className="content-grid">
-              <div className="resource-card">
-                <h3>NCERT Books</h3>
-                <p>Foundation for all subjects (Class 6-12)</p>
-                <button className="resource-btn">View Resources</button>
-              </div>
-              <div className="resource-card">
-                <h3>Standard Reference Books</h3>
-                <p>Advanced study material for each subject</p>
-                <button className="resource-btn">View Resources</button>
-              </div>
-              <div className="resource-card">
-                <h3>Current Affairs</h3>
-                <p>Daily news analysis and monthly magazines</p>
-                <button className="resource-btn">View Resources</button>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {activeTab === 'faq' && (
-          <section className="content-section">
-            <h2>Frequently Asked Questions</h2>
-            <div className="faq-list">
-              <div className="faq-item">
-                <h3>What is the eligibility criteria for UPSC?</h3>
-                <p>Bachelor's degree from recognized university. Age limit varies by category (21-32 years for General).</p>
-              </div>
-              <div className="faq-item">
-                <h3>How many attempts are allowed?</h3>
-                <p>General: 6, OBC: 9, SC/ST: Unlimited until age limit.</p>
-              </div>
-              <div className="faq-item">
-                <h3>What is the best optional subject?</h3>
-                <p>Choose based on interest and background. Popular options include Public Administration, Geography, Sociology.</p>
-              </div>
-            </div>
-          </section>
-        )}
+      <main className="dashboard-content">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            variants={contentVariants}
+            initial="hidden"
+            animate="visible"
+            exit={{ opacity: 0, y: -20 }}
+            className="content-wrapper"
+          >
+            {activeTab === 'about' && <AboutUPSC />}
+            {activeTab === 'exam' && <ExamPattern />}
+            {activeTab === 'summarize' && <SummarizeTopic user={user} setUser={setUser} />}
+            {activeTab === 'material' && <StudyMaterial />}
+            {activeTab === 'faq' && <FAQ />}
+          </motion.div>
+        </AnimatePresence>
       </main>
     </motion.div>
   );

@@ -1,0 +1,244 @@
+/* AboutUPSC.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --secondary: #f97316;
+  --secondary-hover: #ea580c;
+  --neutral-50: #f8fafc;
+  --neutral-100: #f1f5f9;
+  --neutral-200: #e2e8f0;
+  --neutral-700: #334155;
+  --neutral-900: #0f172a;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.1);
+  --radius: 12px;
+  --transition: 0.3s ease;
+}
+
+.about-upsc-wrapper {
+  display: grid;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.about-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.about-section {
+  background: var(--neutral-50);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.about-text {
+  font-size: 0.875rem;
+  color: var(--neutral-700);
+  line-height: 1.6;
+}
+
+.about-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.card-text {
+  font-size: 0.875rem;
+  color: var(--neutral-700);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.exam-stages {
+  display: grid;
+  gap: 1rem;
+}
+
+.stage {
+  background: var(--neutral-100);
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.stage h4 {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--neutral-900);
+  margin-bottom: 0.5rem;
+}
+
+.stage p {
+  font-size: 0.875rem;
+  color: var(--neutral-700);
+  line-height: 1.5;
+}
+
+.criteria-list,
+.features-list,
+.prep-list,
+.services-list {
+  padding-left: 1.25rem;
+  font-size: 0.875rem;
+  color: var(--neutral-700);
+  list-style-type: disc;
+}
+
+.criteria-list li,
+.features-list li,
+.prep-list li,
+.services-list li {
+  margin-bottom: 0.5rem;
+}
+
+.criteria-list ul,
+.features-list ul,
+.prep-list ul,
+.services-list ul {
+  padding-left: 1.5rem;
+  list-style-type: circle;
+  margin-top: 0.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 479px) {
+  .about-upsc-wrapper {
+    padding: 0.75rem;
+    gap: 1rem;
+  }
+
+  .about-title {
+    font-size: 1.5rem;
+  }
+
+  .about-section,
+  .about-card {
+    padding: 1rem;
+  }
+
+  .section-title,
+  .card-title {
+    font-size: 1.125rem;
+  }
+
+  .about-text,
+  .card-text,
+  .stage p,
+  .criteria-list,
+  .features-list,
+  .prep-list,
+  .services-list {
+    font-size: 0.8125rem;
+  }
+
+  .stage h4 {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 480px) and (max-width: 767px) {
+  .about-title {
+    font-size: 1.75rem;
+  }
+
+  .about-section,
+  .about-card {
+    padding: 1.25rem;
+  }
+
+  .exam-stages {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 768px) {
+  .about-upsc-wrapper {
+    padding: 1.5rem;
+    gap: 2rem;
+  }
+
+  .about-title {
+    font-size: 2rem;
+  }
+
+  .about-section,
+  .about-card {
+    padding: 2rem;
+  }
+
+  .section-title,
+  .card-title {
+    font-size: 1.5rem;
+  }
+
+  .about-text,
+  .card-text,
+  .stage p,
+  .criteria-list,
+  .features-list,
+  .prep-list,
+  .services-list {
+    font-size: 1rem;
+  }
+
+  .stage h4 {
+    font-size: 1.25rem;
+  }
+
+  .exam-stages {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .about-upsc-wrapper {
+    padding: 2rem;
+  }
+
+  .about-title {
+    font-size: 2.25rem;
+  }
+
+  .about-section,
+  .about-card {
+    padding: 2.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .about-upsc-wrapper {
+    padding: 3rem;
+  }
+
+  .about-title {
+    font-size: 2.5rem;
+  }
+
+  .section-title,
+  .card-title {
+    font-size: 1.75rem;
+  }
+}

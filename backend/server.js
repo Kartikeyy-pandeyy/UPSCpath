@@ -9,6 +9,7 @@ const summaryRoutes = require('./routes/summaryRoutes');
 require('dotenv').config();
 
 const app = express();
+const isProduction = process.env.NODE_ENV === 'production';
 
 // Middleware
 app.use(express.json());
@@ -16,23 +17,26 @@ app.use(express.json());
 // CORS configuration
 app.use(
   cors({
-    origin: ['https://upscpath.netlify.app', 'http://localhost:3000'],
+    origin: isProduction
+      ? 'https://upscpath.netlify.app'
+      : 'http://localhost:3000',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
+
 app.set('trust proxy', 1);
 
-// Connect to MongoDB first (ensures session store can connect)
+// Connect to MongoDB first
 connectDB();
 
 // Session store setup
 const sessionStore = MongoStore.create({
   mongoUrl: process.env.MONGO_URI,
   collectionName: 'sessions',
-  ttl: 24 * 60 * 60, // 1 day in seconds
-  autoRemove: 'native', // Clean up expired sessions
+  ttl: 24 * 60 * 60,
+  autoRemove: 'native',
 });
 
 sessionStore.on('error', (error) => {
@@ -43,16 +47,15 @@ sessionStore.on('error', (error) => {
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
-    resave: true, // Changed to true for better session handling
+    resave: false,
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      secure: true,
+      secure: isProduction,
       maxAge: 24 * 60 * 60 * 1000,
-      sameSite: 'none',
+      sameSite: isProduction ? 'none' : 'lax',
       httpOnly: true,
       path: '/',
-      domain: '.railway.app' // Important for cross-subdomain
     },
   })
 );
@@ -60,10 +63,6 @@ app.use(
 // Debug session before Passport
 app.use((req, res, next) => {
   console.log('Raw session from store:', JSON.stringify(req.session, null, 2));
-  // Ensure passport data is restored if missing
-  if (req.session && req.session.passport && !req.session.passport.user) {
-    console.warn('Passport data missing in session, attempting to fix');
-  }
   next();
 });
 
@@ -82,6 +81,19 @@ app.use((req, res, next) => {
 app.use('/auth', authRoutes);
 app.use('/summary', summaryRoutes);
 
+// Logout route
+app.get('/auth/logout', (req, res) => {
+  req.logout((err) => {
+    if (err) return res.status(500).json({ message: 'Logout failed' });
+    req.session.destroy(() => {
+      res.clearCookie('connect.sid');
+      res.status(200).json({ message: 'Logged out successfully' });
+    });
+  });
+});
+
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () =>
+  console.log(`🚀 Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`)
+);
