@@ -12,13 +12,12 @@ const app = express();
 
 app.use(express.json());
 
-// Ensure CORS matches the exact frontend URL
 app.use(
   cors({
-    origin: 'https://upscpath.netlify.app', // Hardcode for now to debug, later use process.env.FRONTEND_URL
+    origin: 'https://upscpath.netlify.app',
     credentials: true,
-    methods: ['GET', 'POST', 'OPTIONS'], // Explicitly allow methods
-    allowedHeaders: ['Content-Type', 'Authorization'], // Allow necessary headers
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 
@@ -28,10 +27,11 @@ app.use(
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
-    cookie: { 
-      secure: true, // Set to true for HTTPS in production
+    cookie: {
+      secure: true, // HTTPS in production
       maxAge: 24 * 60 * 60 * 1000, // 1 day
-      sameSite: 'none', // Required for cross-site cookies with HTTPS
+      sameSite: 'none', // Cross-site cookies
+      httpOnly: true, // Prevent client-side access
     },
   })
 );

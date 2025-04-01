@@ -26,8 +26,9 @@ function App() {
       }
     };
     fetchUser();
-  }, []); 
-
+    
+  }, []);
+  console.log('Fetching user from:', backendURL);
   if (loading) return <LoadingSpinner />;
 
   return (

@@ -8,6 +8,7 @@ router.get(
   '/google/callback',
   passport.authenticate('google', { failureRedirect: process.env.FRONTEND_URL }),
   (req, res) => {
+    console.log('User authenticated:', req.user);
     res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
   }
 );
@@ -17,6 +18,8 @@ router.get('/logout', (req, res) => {
 });
 
 router.get('/me', (req, res) => {
+  console.log('Session:', req.session);
+  console.log('User:', req.user);
   if (req.isAuthenticated()) {
     res.json(req.user);
   } else {
