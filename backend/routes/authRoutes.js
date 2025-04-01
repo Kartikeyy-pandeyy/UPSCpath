@@ -8,9 +8,13 @@ router.get(
   '/google/callback',
   passport.authenticate('google', { failureRedirect: process.env.FRONTEND_URL }),
   (req, res) => {
+    if (!req.user) {
+      console.error('Authentication failed, no user');
+      return res.redirect(process.env.FRONTEND_URL);
+    }
     console.log('Callback reached');
-    console.log('Session:', req.session);
-    console.log('User:', req.user);
+    console.log('Session after callback:', req.session);
+    console.log('User after callback:', req.user);
     res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
   }
 );
