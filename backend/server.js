@@ -16,12 +16,13 @@ app.use(express.json());
 // CORS configuration
 app.use(
   cors({
-    origin: 'https://upscpath.netlify.app',
+    origin: ['https://upscpath.netlify.app'],
     credentials: true,
-    methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
   })
 );
+app.set('trust proxy', 1);
 
 // Connect to MongoDB first (ensures session store can connect)
 connectDB();
@@ -42,15 +43,16 @@ sessionStore.on('error', (error) => {
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
-    resave: false,
+    resave: true, // Changed to true for better session handling
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      secure: true, // HTTPS in production
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
-      sameSite: 'none', // Cross-site cookies
+      secure: true,
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: 'none',
       httpOnly: true,
       path: '/',
+      domain: '.railway.app' // Important for cross-subdomain cookies
     },
   })
 );

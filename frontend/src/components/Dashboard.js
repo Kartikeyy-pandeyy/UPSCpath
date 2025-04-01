@@ -1,27 +1,62 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import './Dashboard.css';
 import { FaBook, FaSignOutAlt, FaSpinner, FaCopy, FaTrash } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
-const Dashboard = ({ user }) => {
+const Dashboard = ({ user, setUser }) => {
   const [topic, setTopic] = useState('');
   const [summary, setSummary] = useState([]);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [authChecking, setAuthChecking] = useState(true);
+  const navigate = useNavigate();
 
-  const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+  const backendURL = process.env.REACT_APP_BACKEND_URL || 'https://upscpath-production.up.railway.app';
+
+  // Verify authentication status on mount and periodically
+  useEffect(() => {
+    const verifyAuth = async () => {
+      try {
+        const response = await fetch(`${backendURL}/auth/me`, {
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Not authenticated');
+        }
+
+        const userData = await response.json();
+        setUser(userData);
+      } catch (error) {
+        console.error('Authentication check failed:', error);
+        navigate('/');
+      } finally {
+        setAuthChecking(false);
+      }
+    };
+
+    verifyAuth();
+
+    // Set up periodic auth checks (every 5 minutes)
+    const intervalId = setInterval(verifyAuth, 300000);
+    return () => clearInterval(intervalId);
+  }, [backendURL, navigate, setUser]);
 
   const handleSummarize = async () => {
     if (!topic.trim()) {
       console.error("Error: Topic is empty!");
       return;
     }
-  
+
     setLoading(true);
     try {
       const { data } = await api.post('/summary/summarize', { text: topic });
-      if (data && data.summary) {
+      if (data?.summary) {
         let formattedSummary = data.summary.replace(/^Summarize the following.*?\n\n"/, "");
         const bulletPoints = formattedSummary.split("- ").filter(point => point.trim() !== "");
         setSummary(bulletPoints);
@@ -30,13 +65,35 @@ const Dashboard = ({ user }) => {
       }
     } catch (error) {
       console.error('Summarization failed', error);
-      setSummary(['Error fetching summary. Please try again.']);
+      if (error.response?.status === 401) {
+        // Handle unauthorized error
+        navigate('/');
+      } else {
+        setSummary(['Error fetching summary. Please try again.']);
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
-  const handleLogout = () => {
-    window.location.href = `${backendURL}/auth/logout`;
+  const handleLogout = async () => {
+    try {
+      await fetch(`${backendURL}/auth/logout`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+      
+      // Clear client-side state
+      setUser(null);
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      // Redirect to login
+      navigate('/');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      navigate('/');
+    }
   };
 
   const handleKeyDown = (e) => {
@@ -68,6 +125,14 @@ const Dashboard = ({ user }) => {
     'Economic Reforms',
   ];
 
+  if (authChecking) {
+    return (
+      <div className="loading-container">
+        <FaSpinner className="spinner" /> Loading dashboard...
+      </div>
+    );
+  }
+
   return (
     <motion.div
       className="dashboard-wrapper"
@@ -79,7 +144,7 @@ const Dashboard = ({ user }) => {
         <div className="header-content">
           <FaBook className="header-icon" />
           <div>
-            <h1>Hello, {user.name}!</h1>
+            <h1>Hello, {user?.name}!</h1>
             <p>Your personalized UPSC preparation hub</p>
           </div>
         </div>

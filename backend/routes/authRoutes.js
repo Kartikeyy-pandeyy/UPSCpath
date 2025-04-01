@@ -6,27 +6,21 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 
 router.get(
   '/google/callback',
-  passport.authenticate('google', { failureRedirect: process.env.FRONTEND_URL }),
+  passport.authenticate('google', { 
+    failureRedirect: `${process.env.FRONTEND_URL}/login`,
+    failureMessage: true 
+  }),
   (req, res) => {
-    if (!req.user) {
-      console.error('Authentication failed, no user');
-      return res.redirect(process.env.FRONTEND_URL);
-    }
-    console.log('Callback reached');
-    console.log('User after callback:', req.user);
-    console.log('Session before save:', JSON.stringify(req.session, null, 2));
-
-    // Ensure session is saved
-    req.session.save((err) => {
-      if (err) {
-        console.error('Error saving session:', err);
-        return res.redirect(process.env.FRONTEND_URL);
-      }
-      console.log('Session after save:', JSON.stringify(req.session, null, 2));
-      res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
-    });
+    // Successful authentication
+    console.log('Successful authentication, user:', req.user);
+    
+    // Set a flag in session to indicate successful auth
+    req.session.authenticated = true;
+    
+    res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
   }
 );
+
 
 router.get('/logout', (req, res) => {
   req.logout((err) => {
@@ -36,16 +30,19 @@ router.get('/logout', (req, res) => {
 });
 
 router.get('/me', (req, res) => {
-  console.log('Manual passport check:', req.session.passport);
-  if (!req.session.passport && req.session.user) {
-    req.session.passport = { user: req.session.user };
-  }
-  console.log('GET /auth/me - Session:', JSON.stringify(req.session, null, 2));
-  console.log('GET /auth/me - User:', req.user);
   if (req.isAuthenticated()) {
-    res.json(req.user);
+    // Return minimal user data needed by frontend
+    const userData = {
+      id: req.user._id,
+      name: req.user.name,
+      email: req.user.email
+    };
+    res.json(userData);
   } else {
-    res.status(401).json({ error: 'Not authenticated' });
+    res.status(401).json({ 
+      error: 'Not authenticated',
+      authUrl: '/auth/google' // Provide auth URL for frontend
+    });
   }
 });
 

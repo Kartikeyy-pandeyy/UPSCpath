@@ -34,25 +34,28 @@ passport.use(
   )
 );
 
+// Enhanced serialize/deserialize
 passport.serializeUser((user, done) => {
-  const userId = user._id.toString();
-  console.log('Serializing user:', userId);
-  done(null, userId);
+  console.log('Serializing user:', user.id);
+  done(null, { 
+    id: user.id,
+    googleId: user.googleId 
+  });
 });
 
-passport.deserializeUser(async (id, done) => {
-  console.log('Deserializing user with ID:', id);
+passport.deserializeUser(async (obj, done) => {
   try {
-    const user = await User.findById(id);
+    console.log('Deserializing user with ID:', obj.id);
+    const user = await User.findById(obj.id);
     if (!user) {
-      console.log('User not found for ID:', id);
+      console.log('User not found');
       return done(null, false);
     }
     console.log('Deserialized user:', user);
     return done(null, user);
   } catch (error) {
-    console.error('Error deserializing user:', error);
-    return done(error, null);
+    console.error('Deserialization error:', error);
+    return done(error);
   }
 });
 

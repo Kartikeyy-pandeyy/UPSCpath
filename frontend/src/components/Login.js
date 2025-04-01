@@ -1,16 +1,20 @@
 import React from 'react';
 import './Login.css';
 import { FaGoogle, FaBookReader } from 'react-icons/fa';
-import { motion } from 'framer-motion'; // For animations
+import { motion } from 'framer-motion';
 
 const Login = () => {
-  const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+  const backendURL = process.env.REACT_APP_BACKEND_URL || 'https://upscpath-production.up.railway.app';
 
   const handleLogin = () => {
+    // Clear any existing session data before initiating new login
+    localStorage.clear();
+    sessionStorage.clear();
+    
+    // Open Google OAuth in same tab
     window.location.href = `${backendURL}/auth/google`;
   };
 
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {
@@ -41,13 +45,13 @@ const Login = () => {
         <p className="tagline">Smart summarization for efficient exam preparation</p>
 
         <motion.button
-  className="login-button"
-  onClick={handleLogin}
-  variants={buttonVariants}
-  whileHover="hover"
-  whileTap="tap"
-  aria-label="Continue with Google"
->
+          className="login-button"
+          onClick={handleLogin}
+          variants={buttonVariants}
+          whileHover="hover"
+          whileTap="tap"
+          aria-label="Continue with Google"
+        >
           <FaGoogle className="google-icon" />
           Continue with Google
         </motion.button>
