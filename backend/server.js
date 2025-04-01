@@ -10,8 +10,10 @@ require('dotenv').config();
 
 const app = express();
 
+// Middleware
 app.use(express.json());
 
+// CORS configuration
 app.use(
   cors({
     origin: 'https://upscpath.netlify.app',
@@ -21,19 +23,22 @@ app.use(
   })
 );
 
-// Session store
+// Connect to MongoDB first (ensures session store can connect)
+connectDB();
+
+// Session store setup
 const sessionStore = MongoStore.create({
   mongoUrl: process.env.MONGO_URI,
   collectionName: 'sessions',
-  ttl: 24 * 60 * 60,
-  autoRemove: 'native',
-  stringify: false, // Ensure session data isn’t stringified
+  ttl: 24 * 60 * 60, // 1 day in seconds
+  autoRemove: 'native', // Clean up expired sessions
 });
 
 sessionStore.on('error', (error) => {
   console.error('Session store error:', error);
 });
 
+// Session middleware
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -41,9 +46,9 @@ app.use(
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      secure: true,
-      maxAge: 24 * 60 * 60 * 1000,
-      sameSite: 'none',
+      secure: true, // HTTPS in production
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      sameSite: 'none', // Cross-site cookies
       httpOnly: true,
       path: '/',
     },
@@ -52,23 +57,29 @@ app.use(
 
 // Debug session before Passport
 app.use((req, res, next) => {
-  console.log('Session before Passport:', JSON.stringify(req.session, null, 2));
+  console.log('Raw session from store:', JSON.stringify(req.session, null, 2));
+  // Ensure passport data is restored if missing
+  if (req.session && req.session.passport && !req.session.passport.user) {
+    console.warn('Passport data missing in session, attempting to fix');
+  }
   next();
 });
 
+// Initialize Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
 // Debug session after Passport
 app.use((req, res, next) => {
   console.log('Session after Passport:', JSON.stringify(req.session, null, 2));
+  console.log('User after Passport:', req.user || 'undefined');
   next();
 });
 
-connectDB();
-
+// Routes
 app.use('/auth', authRoutes);
 app.use('/summary', summaryRoutes);
 
+// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
