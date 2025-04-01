@@ -25,18 +25,18 @@ passport.use(
         } else {
           console.log('Existing user found:', user);
         }
-        done(null, user);
+        return done(null, user); // Explicit return
       } catch (error) {
         console.error('Error in GoogleStrategy:', error);
-        done(error, null);
+        return done(error, null);
       }
     }
   )
 );
 
 passport.serializeUser((user, done) => {
-  console.log('Serializing user:', user.id);
-  done(null, user.id);
+  console.log('Serializing user:', user._id.toString());
+  done(null, user._id.toString()); // Ensure ID is a string
 });
 
 passport.deserializeUser(async (id, done) => {
@@ -44,13 +44,13 @@ passport.deserializeUser(async (id, done) => {
     const user = await User.findById(id);
     if (!user) {
       console.log('User not found for ID:', id);
-      return done(null, false); // No user found
+      return done(null, false);
     }
     console.log('Deserialized user:', user);
-    done(null, user);
+    return done(null, user);
   } catch (error) {
     console.error('Error deserializing user:', error);
-    done(error, null);
+    return done(error, null);
   }
 });
 
