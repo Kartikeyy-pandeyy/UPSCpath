@@ -41,12 +41,13 @@ const Login = () => {
         <p className="tagline">Smart summarization for efficient exam preparation</p>
 
         <motion.button
-          className="login-button"
-          onClick={handleLogin}
-          variants={buttonVariants}
-          whileHover="hover"
-          whileTap="tap"
-        >
+  className="login-button"
+  onClick={handleLogin}
+  variants={buttonVariants}
+  whileHover="hover"
+  whileTap="tap"
+  aria-label="Continue with Google"
+>
           <FaGoogle className="google-icon" />
           Continue with Google
         </motion.button>

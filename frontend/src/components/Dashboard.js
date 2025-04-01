@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from '../services/api';
+import api from '../services/api';
 import './Dashboard.css';
 import { FaBook, FaSignOutAlt, FaSpinner, FaCopy, FaTrash } from 'react-icons/fa';
 import { motion } from 'framer-motion';
@@ -17,13 +17,17 @@ const Dashboard = ({ user }) => {
       console.error("Error: Topic is empty!");
       return;
     }
-
+  
     setLoading(true);
     try {
-      const { data } = await axios.post(`${backendURL}/summary/summarize`, { text: topic });
-      let formattedSummary = data.summary.replace(/^Summarize the following.*?\n\n"/, "");
-      const bulletPoints = formattedSummary.split("- ").filter(point => point.trim() !== "");
-      setSummary(bulletPoints);
+      const { data } = await api.post('/summary/summarize', { text: topic });
+      if (data && data.summary) {
+        let formattedSummary = data.summary.replace(/^Summarize the following.*?\n\n"/, "");
+        const bulletPoints = formattedSummary.split("- ").filter(point => point.trim() !== "");
+        setSummary(bulletPoints);
+      } else {
+        setSummary(['No summary returned from the server.']);
+      }
     } catch (error) {
       console.error('Summarization failed', error);
       setSummary(['Error fetching summary. Please try again.']);

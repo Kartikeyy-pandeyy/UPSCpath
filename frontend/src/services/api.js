@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://upscpath-production.up.railway.app', // Update this if backend is deployed
-  withCredentials: true, // This allows cookies/session to be sent
+  baseURL: process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000',
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
