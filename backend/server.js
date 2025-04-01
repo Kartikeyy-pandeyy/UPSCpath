@@ -16,7 +16,7 @@ app.use(express.json());
 // CORS configuration
 app.use(
   cors({
-    origin: ['https://upscpath.netlify.app'],
+    origin: ['https://upscpath.netlify.app', 'http://localhost:3000'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],

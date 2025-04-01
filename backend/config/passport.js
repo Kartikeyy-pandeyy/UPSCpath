@@ -3,17 +3,24 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/User');
 require('dotenv').config();
 
+// Dynamically set the callback URL based on the environment
+const callbackURL =
+  process.env.NODE_ENV === 'production'
+    ? process.env.CALLBACK_URL_PROD
+    : process.env.CALLBACK_URL_DEV;
+
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: 'https://upscpath-production.up.railway.app/auth/google/callback',
+      callbackURL, // Uses the dynamic callback URL
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
         console.log('Google profile:', profile);
         let user = await User.findOne({ googleId: profile.id });
+
         if (!user) {
           user = new User({
             googleId: profile.id,
@@ -34,7 +41,7 @@ passport.use(
   )
 );
 
-// Enhanced serialize/deserialize
+// Serialize user
 passport.serializeUser((user, done) => {
   console.log('Serializing user:', user.id);
   done(null, { 
@@ -43,6 +50,7 @@ passport.serializeUser((user, done) => {
   });
 });
 
+// Deserialize user
 passport.deserializeUser(async (obj, done) => {
   try {
     console.log('Deserializing user with ID:', obj.id);
