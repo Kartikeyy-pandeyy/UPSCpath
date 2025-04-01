@@ -26,7 +26,7 @@ function App() {
       }
     };
     fetchUser();
-  }, []); // No dependencies since backendURL is now outside
+  }, []); 
 
   if (loading) return <LoadingSpinner />;
 

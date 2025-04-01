@@ -11,21 +11,31 @@ require('dotenv').config();
 const app = express();
 
 app.use(express.json());
+
+// Ensure CORS matches the exact frontend URL
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: 'https://upscpath.netlify.app', // Hardcode for now to debug, later use process.env.FRONTEND_URL
     credentials: true,
+    methods: ['GET', 'POST', 'OPTIONS'], // Explicitly allow methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allow necessary headers
   })
 );
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
-    cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }, // 1 day, secure: false for local testing
+    cookie: { 
+      secure: true, // Set to true for HTTPS in production
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      sameSite: 'none', // Required for cross-site cookies with HTTPS
+    },
   })
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
 
