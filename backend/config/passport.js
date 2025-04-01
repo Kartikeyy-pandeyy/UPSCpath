@@ -25,7 +25,7 @@ passport.use(
         } else {
           console.log('Existing user found:', user);
         }
-        return done(null, user); // Explicit return
+        return done(null, user);
       } catch (error) {
         console.error('Error in GoogleStrategy:', error);
         return done(error, null);
@@ -36,10 +36,11 @@ passport.use(
 
 passport.serializeUser((user, done) => {
   console.log('Serializing user:', user._id.toString());
-  done(null, user._id.toString()); // Ensure ID is a string
+  done(null, user._id.toString());
 });
 
 passport.deserializeUser(async (id, done) => {
+  console.log('Attempting to deserialize user with ID:', id);
   try {
     const user = await User.findById(id);
     if (!user) {
