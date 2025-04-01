@@ -70,13 +70,13 @@ function App() {
             element={user ? <Navigate to="/dashboard" /> : <Login />} 
           />
           <Route 
-            path="/dashboard" 
-            element={
-              <ProtectedRoute>
-                <Dashboard user={user} />
-              </ProtectedRoute>
-            } 
-          />
+  path="/dashboard" 
+  element={
+    <ProtectedRoute>
+      <Dashboard user={user} setUser={setUser} />
+    </ProtectedRoute>
+  } 
+/>
           {/* Handle OAuth callback route */}
           <Route 
             path="/oauth-callback" 

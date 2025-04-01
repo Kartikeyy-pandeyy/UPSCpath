@@ -15,10 +15,11 @@ const Dashboard = ({ user, setUser }) => {
 
   const backendURL = process.env.REACT_APP_BACKEND_URL || 'https://upscpath-production.up.railway.app';
 
-  // Verify authentication status on mount and periodically
+  // Verify authentication status on mount
   useEffect(() => {
     const verifyAuth = async () => {
       try {
+        console.log('Verifying authentication...');
         const response = await fetch(`${backendURL}/auth/me`, {
           credentials: 'include',
           headers: {
@@ -26,14 +27,29 @@ const Dashboard = ({ user, setUser }) => {
           },
         });
 
+        console.log('Auth verification response:', response.status);
+        
         if (!response.ok) {
           throw new Error('Not authenticated');
         }
 
         const userData = await response.json();
-        setUser(userData);
+        console.log('User data received:', userData);
+        
+        if (!userData || !userData.id) {
+          throw new Error('Invalid user data');
+        }
+
+        // Only update user if data changed
+        if (!user || user.id !== userData.id) {
+          setUser(userData);
+        }
       } catch (error) {
-        console.error('Authentication check failed:', error);
+        console.error('Authentication verification failed:', error);
+        // Clear user and redirect only if not already logged out
+        if (user) {
+          setUser(null);
+        }
         navigate('/');
       } finally {
         setAuthChecking(false);
@@ -42,10 +58,11 @@ const Dashboard = ({ user, setUser }) => {
 
     verifyAuth();
 
-    // Set up periodic auth checks (every 5 minutes)
-    const intervalId = setInterval(verifyAuth, 300000);
-    return () => clearInterval(intervalId);
-  }, [backendURL, navigate, setUser]);
+    // Cleanup function
+    return () => {
+      // Cancel any pending requests if needed
+    };
+  }, [backendURL, navigate, setUser, user]);
 
   const handleSummarize = async () => {
     if (!topic.trim()) {
@@ -66,7 +83,7 @@ const Dashboard = ({ user, setUser }) => {
     } catch (error) {
       console.error('Summarization failed', error);
       if (error.response?.status === 401) {
-        // Handle unauthorized error
+        setUser(null);
         navigate('/');
       } else {
         setSummary(['Error fetching summary. Please try again.']);
@@ -131,6 +148,10 @@ const Dashboard = ({ user, setUser }) => {
         <FaSpinner className="spinner" /> Loading dashboard...
       </div>
     );
+  }
+
+  if (!user) {
+    return null; // Or redirect to login
   }
 
   return (

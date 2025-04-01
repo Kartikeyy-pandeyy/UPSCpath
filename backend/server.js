@@ -19,7 +19,7 @@ app.use(
     origin: ['https://upscpath.netlify.app'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 app.set('trust proxy', 1);
@@ -52,7 +52,7 @@ app.use(
       sameSite: 'none',
       httpOnly: true,
       path: '/',
-      domain: '.railway.app' // Important for cross-subdomain cookies
+      domain: '.railway.app' // Important for cross-subdomain
     },
   })
 );
