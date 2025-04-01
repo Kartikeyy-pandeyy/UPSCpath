@@ -42,6 +42,10 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await User.findById(id);
+    if (!user) {
+      console.log('User not found for ID:', id);
+      return done(null, false); // No user found
+    }
     console.log('Deserialized user:', user);
     done(null, user);
   } catch (error) {
