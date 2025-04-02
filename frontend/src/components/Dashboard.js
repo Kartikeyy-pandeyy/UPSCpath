@@ -43,7 +43,7 @@ const Dashboard = ({ user, setUser }) => {
     try {
       const response = await fetch(`${backendURL}/auth/logout`, {
         method: 'GET',
-        credentials: 'include', // Ensure cookies are sent
+        credentials: 'include',
         mode: 'cors',
       });
   
@@ -51,10 +51,14 @@ const Dashboard = ({ user, setUser }) => {
         throw new Error('Logout failed');
       }
   
+      // Wait for session clearance
+      await new Promise((resolve) => setTimeout(resolve, 500));
+  
       setUser(null);
       localStorage.clear();
       sessionStorage.clear();
       navigate('/');
+      window.location.reload(); // Force refresh to clear any remaining session data
     } catch (error) {
       console.error('Logout error:', error);
     }
