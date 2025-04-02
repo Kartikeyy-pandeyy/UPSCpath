@@ -7,7 +7,6 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const summaryRoutes = require('./routes/summaryRoutes');
 require('dotenv').config();
-app.options('*', cors()); // Handle preflight CORS requests
 
 const app = express();
 const isProduction = process.env.NODE_ENV === 'production';
