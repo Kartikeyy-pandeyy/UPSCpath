@@ -192,6 +192,7 @@ body {
 
   .header-logo {
     font-size: 1.125rem;
+    order: 1; /* Ensure logo is at the top */
   }
 
   .logo-icon {
@@ -200,12 +201,13 @@ body {
 
   .header-greeting {
     font-size: 1rem;
-    order: -1;
+    order: 2; /* Greeting below logo */
   }
 
   .logout-btn {
     width: 100%;
     padding: 0.75rem;
+    order: 3; /* Logout button at the bottom */
   }
 
   .tabs-container {

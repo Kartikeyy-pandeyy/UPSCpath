@@ -46,17 +46,6 @@ const Login = () => {
             <p className="subtitle">Your AI-Powered UPSC Companion</p>
           </div>
 
-          <motion.button
-            className="login-button"
-            onClick={handleLogin}
-            whileHover={{ scale: 1.05, boxShadow: '0 6px 12px rgba(37, 99, 235, 0.2)' }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-          >
-            <FaGoogle className="google-icon" />
-            Sign in with Google
-          </motion.button>
-
           <div className="features-grid">
             {[
               { icon: '📚', text: 'Curated Study Material' },
@@ -77,6 +66,17 @@ const Login = () => {
               </motion.div>
             ))}
           </div>
+
+          <motion.button
+            className="login-button"
+            onClick={handleLogin}
+            whileHover={{ scale: 1.05, boxShadow: '0 6px 12px rgba(37, 99, 235, 0.2)' }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+          >
+            <FaGoogle className="google-icon" />
+            Sign in with Google
+          </motion.button>
 
           <footer className="footer">
             <p>Crafted with ❤️ by Kartikey Pandey</p>

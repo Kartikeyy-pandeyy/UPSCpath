@@ -58,7 +58,6 @@ const Dashboard = ({ user, setUser }) => {
   const tabs = [
     { name: 'about', label: 'About UPSC' },
     { name: 'exam', label: 'Exam Pattern' },
-    
     { name: 'summarize', label: 'Summarize Topic' },
     { name: 'material', label: 'Study Material' },
     { name: 'faq', label: 'FAQ' },
