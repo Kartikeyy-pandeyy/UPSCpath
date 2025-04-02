@@ -94,17 +94,21 @@ app.get('/auth/logout', (req, res) => {
       res.clearCookie('connect.sid', {
         path: '/',
         httpOnly: true,
-        secure: isProduction, // Must be secure in production
-        sameSite: 'none', // Important for cross-origin cookies
+        secure: isProduction,
+        sameSite: 'none',
       });
 
+      // Add CORS headers explicitly for logout response
       res.setHeader('Access-Control-Allow-Origin', isProduction ? 'https://upscpath.netlify.app' : 'http://localhost:3000');
       res.setHeader('Access-Control-Allow-Credentials', 'true');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
       return res.status(200).json({ message: 'Logged out successfully' });
     });
   });
 });
+;
 
 
 // Start server
