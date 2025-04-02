@@ -28,7 +28,7 @@ app.use(
 
 app.set('trust proxy', 1);
 
-// Connect to MongoDB first
+// Connect to MongoDB
 connectDB();
 
 // Session store setup
@@ -51,30 +51,17 @@ app.use(
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      secure: isProduction, // Ensure secure cookies in production
+      secure: isProduction,
       httpOnly: true,
-      sameSite: 'none', // Required for cross-origin session sharing
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      sameSite: 'none',
+      maxAge: 24 * 60 * 60 * 1000,
     },
   })
 );
 
-// Debug session before Passport
-app.use((req, res, next) => {
-  console.log('Raw session from store:', JSON.stringify(req.session, null, 2));
-  next();
-});
-
 // Initialize Passport
 app.use(passport.initialize());
 app.use(passport.session());
-
-// Debug session after Passport
-app.use((req, res, next) => {
-  console.log('Session after Passport:', JSON.stringify(req.session, null, 2));
-  console.log('User after Passport:', req.user || 'undefined');
-  next();
-});
 
 // Routes
 app.use('/auth', authRoutes);
@@ -98,18 +85,11 @@ app.get('/auth/logout', (req, res) => {
         sameSite: 'none',
       });
 
-      // Add CORS headers explicitly for logout response
-      res.setHeader('Access-Control-Allow-Origin', isProduction ? 'https://upscpath.netlify.app' : 'http://localhost:3000');
-      res.setHeader('Access-Control-Allow-Credentials', 'true');
-      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
+      // Simplify response; rely on global CORS middleware
       return res.status(200).json({ message: 'Logged out successfully' });
     });
   });
 });
-;
-
 
 // Start server
 const PORT = process.env.PORT || 5000;

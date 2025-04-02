@@ -1,4 +1,3 @@
-// Dashboard.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -46,24 +45,19 @@ const Dashboard = ({ user, setUser }) => {
         credentials: 'include',
         mode: 'cors',
       });
-  
+
       if (!response.ok) {
         throw new Error('Logout failed');
       }
-  
-      // Wait for session clearance
-      await new Promise((resolve) => setTimeout(resolve, 500));
-  
-      setUser(null);
-      localStorage.clear();
-      sessionStorage.clear();
-      navigate('/');
-      window.location.reload(); // Force refresh to clear any remaining session data
     } catch (error) {
       console.error('Logout error:', error);
+    } finally {
+      localStorage.clear();
+      sessionStorage.clear();
+      setUser(null);
+      await verifyAuth();
     }
   };
-  
 
   const tabs = [
     { name: 'about', label: 'About UPSC' },
