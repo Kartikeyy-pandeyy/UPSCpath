@@ -51,11 +51,10 @@ app.use(
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      secure: isProduction,
-      maxAge: 24 * 60 * 60 * 1000,
-      sameSite: isProduction ? 'none' : 'lax',
+      secure: isProduction, // Ensure secure cookies in production
       httpOnly: true,
-      path: '/',
+      sameSite: 'none', // Required for cross-origin session sharing
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
     },
   })
 );
@@ -81,16 +80,32 @@ app.use((req, res, next) => {
 app.use('/auth', authRoutes);
 app.use('/summary', summaryRoutes);
 
-// Logout route
 app.get('/auth/logout', (req, res) => {
   req.logout((err) => {
-    if (err) return res.status(500).json({ message: 'Logout failed' });
-    req.session.destroy(() => {
-      res.clearCookie('connect.sid');
-      res.status(200).json({ message: 'Logged out successfully' });
+    if (err) {
+      return res.status(500).json({ message: 'Logout failed' });
+    }
+
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ message: 'Failed to destroy session' });
+      }
+
+      res.clearCookie('connect.sid', {
+        path: '/',
+        httpOnly: true,
+        secure: isProduction, // Must be secure in production
+        sameSite: 'none', // Important for cross-origin cookies
+      });
+
+      res.setHeader('Access-Control-Allow-Origin', isProduction ? 'https://upscpath.netlify.app' : 'http://localhost:3000');
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+      return res.status(200).json({ message: 'Logged out successfully' });
     });
   });
 });
+
 
 // Start server
 const PORT = process.env.PORT || 5000;

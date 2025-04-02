@@ -41,19 +41,25 @@ const Dashboard = ({ user, setUser }) => {
 
   const handleLogout = async () => {
     try {
-      await fetch(`${backendURL}/auth/logout`, {
+      const response = await fetch(`${backendURL}/auth/logout`, {
         method: 'GET',
-        credentials: 'include',
+        credentials: 'include', // Ensure cookies are sent
+        mode: 'cors',
       });
-    } catch (error) {
-      console.error('Logout error:', error);
-    } finally {
+  
+      if (!response.ok) {
+        throw new Error('Logout failed');
+      }
+  
       setUser(null);
       localStorage.clear();
       sessionStorage.clear();
       navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
     }
   };
+  
 
   const tabs = [
     { name: 'about', label: 'About UPSC' },
