@@ -60,20 +60,19 @@ app.use(
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      secure: isProduction,
+      secure: isProduction ? true : false, // Ensure secure is explicitly false in dev
       httpOnly: true,
-      sameSite: isProduction ? 'none' : 'lax',
+      sameSite: isProduction ? 'none' : 'lax', // 'none' requires secure: true in production
       maxAge: 24 * 60 * 60 * 1000,
     },
   })
 );
 
-// Debug session (optional, remove in production)
+// Debug session
 app.use((req, res, next) => {
-  if (!isProduction) {
-    console.log('Session ID:', req.sessionID);
-    console.log('Session:', req.session);
-  }
+  console.log('Session ID:', req.sessionID);
+  console.log('Session:', req.session);
+  console.log('User:', req.user);
   next();
 });
 
@@ -109,7 +108,7 @@ app.get('/auth/logout', (req, res) => {
   });
 });
 
-// Fetch signed URL for PDF (kept for potential future use)
+// Fetch signed URL for PDF
 app.get('/book-url', async (req, res) => {
   const { book } = req.query;
   if (!book) return res.status(400).json({ error: 'Book parameter is required' });
@@ -145,7 +144,7 @@ app.get('/book-url', async (req, res) => {
   const params = {
     Bucket: 'path-study-material',
     Key: key,
-    Expires: 3600, // URL expires in 1 hour
+    Expires: 3600,
   };
 
   try {

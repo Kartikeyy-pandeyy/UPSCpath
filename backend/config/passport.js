@@ -14,7 +14,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL, // Uses the dynamic callback URL
+      callbackURL,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -43,17 +43,19 @@ passport.use(
 
 // Serialize user into session
 passport.serializeUser((user, done) => {
-  console.log('Serializing user:', user._id); // Use _id for MongoDB
-  done(null, user._id); // Store only the MongoDB _id in the session
+  console.log('Serializing user with _id:', user._id);
+  done(null, user._id.toString()); // Explicitly convert ObjectId to string
 });
 
 // Deserialize user from session
 passport.deserializeUser(async (id, done) => {
   try {
     console.log('Deserializing user with ID:', id);
-    const user = await User.findById(id);
+    // Handle case where id might be an object (due to session corruption)
+    const userId = typeof id === 'string' ? id : id._id || id.id;
+    const user = await User.findById(userId);
     if (!user) {
-      console.log('User not found');
+      console.log('User not found for ID:', userId);
       return done(null, false);
     }
     console.log('Deserialized user:', user);
