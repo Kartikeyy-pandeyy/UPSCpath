@@ -12,27 +12,30 @@ const BookViewer = ({ book, onClose }) => {
   const [showNotesPopup, setShowNotesPopup] = useState(false);
   const iframeRef = useRef(null);
 
-  // Fetch PDF URL from backend
+  // Fetch PDF URL with error handling and cleanup
   useEffect(() => {
+    let mounted = true;
     const fetchPdf = async () => {
       try {
+        setLoading(true);
         const response = await fetch(`${backendURL}/book-url?book=${encodeURIComponent(book)}`, {
           credentials: 'include',
         });
         if (!response.ok) throw new Error('Failed to fetch PDF URL');
         const { url } = await response.json();
-        setPdfUrl(url);
+        if (mounted) setPdfUrl(url);
       } catch (error) {
         console.error('Error fetching PDF URL:', error);
-        setPdfUrl('');
+        if (mounted) setPdfUrl('');
       } finally {
-        setLoading(false);
+        if (mounted) setLoading(false);
       }
     };
     fetchPdf();
+    return () => { mounted = false; }; // Cleanup to prevent state updates on unmounted component
   }, [book]);
 
-  // Download notes locally
+  // Download notes with cleanup
   const downloadNotes = () => {
     if (!notes) return;
     const blob = new Blob([notes], { type: 'text/plain' });
@@ -40,25 +43,33 @@ const BookViewer = ({ book, onClose }) => {
     const link = document.createElement('a');
     link.href = url;
     link.download = `${book}-notes.txt`;
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };
 
-  // Toggle notes popup
-  const toggleNotesPopup = () => {
-    setShowNotesPopup(!showNotesPopup);
-  };
+  // Toggle notes popup with escape key support
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && showNotesPopup) setShowNotesPopup(false);
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [showNotesPopup]);
+
+  const toggleNotesPopup = () => setShowNotesPopup((prev) => !prev);
 
   const viewerVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
-    exit: { opacity: 0, y: 50, transition: { duration: 0.3, ease: 'easeIn' } },
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.4, ease: 'easeOut' } },
+    exit: { opacity: 0, scale: 0.95, transition: { duration: 0.3, ease: 'easeIn' } },
   };
 
   const popupVariants = {
-    hidden: { opacity: 0, scale: 0.9, y: 20 },
-    visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
-    exit: { opacity: 0, scale: 0.9, y: 20, transition: { duration: 0.2, ease: 'easeIn' } },
+    hidden: { opacity: 0, scale: 0.9 },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.3, ease: 'easeOut' } },
+    exit: { opacity: 0, scale: 0.9, transition: { duration: 0.2, ease: 'easeIn' } },
   };
 
   return (
@@ -75,11 +86,12 @@ const BookViewer = ({ book, onClose }) => {
           <div className="book-viewer-actions">
             <motion.button
               className="action-btn download-btn"
-              onClick={() => window.open(pdfUrl, '_blank')}
+              onClick={() => pdfUrl && window.open(pdfUrl, '_blank')}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               title="Download PDF"
               disabled={!pdfUrl || loading}
+              aria-label="Download PDF"
             >
               <FaDownload />
             </motion.button>
@@ -89,6 +101,7 @@ const BookViewer = ({ book, onClose }) => {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               title="Take Notes"
+              aria-label="Take Notes"
             >
               <FaStickyNote />
             </motion.button>
@@ -98,6 +111,7 @@ const BookViewer = ({ book, onClose }) => {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               title="Close Viewer"
+              aria-label="Close Viewer"
             >
               <FaTimes />
             </motion.button>
@@ -111,16 +125,21 @@ const BookViewer = ({ book, onClose }) => {
               <span>Loading PDF...</span>
             </div>
           )}
-          <iframe
-            ref={iframeRef}
-            src={pdfUrl || '#'}
-            title={book}
-            className="book-iframe"
-            onLoad={() => setLoading(false)}
-          />
+          {pdfUrl ? (
+            <iframe
+              ref={iframeRef}
+              src={pdfUrl}
+              title={book}
+              className="book-iframe"
+              loading="lazy"
+            />
+          ) : (
+            <div className="error-overlay">
+              <span>Failed to load PDF. Please try again.</span>
+            </div>
+          )}
         </div>
 
-        {/* Notes Popup */}
         <AnimatePresence>
           {showNotesPopup && (
             <motion.div
@@ -135,6 +154,7 @@ const BookViewer = ({ book, onClose }) => {
                 placeholder="Take notes here..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
+                aria-label="Notes Input"
               />
               <div className="notes-actions">
                 <motion.button
@@ -143,12 +163,13 @@ const BookViewer = ({ book, onClose }) => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   disabled={!notes}
+                  aria-label="Download Notes"
                 >
                   <FaDownload /> Download Notes
                 </motion.button>
               </div>
               <p className="notes-session-notice">
-                Notes are only stored in this session. Download them for further use.
+                Notes are session-only. Download to save.
               </p>
             </motion.div>
           )}
