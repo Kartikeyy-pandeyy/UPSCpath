@@ -14,7 +14,7 @@ const StudyMaterial = () => {
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-    hover: { y: -5, boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1)' },
+    hover: { y: -5, boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1)', transition: { duration: 0.2 } },
   };
 
   const ncertSubjects = [
@@ -36,7 +36,7 @@ const StudyMaterial = () => {
       title: 'ECONOMICS',
       books: ['Class 9', 'Class 10', 'Class 11', 'Class 12 Part 1', 'Class 12 Part 2'],
     },
-    { title: 'ART & CULTURE', books: ['Class 11', 'Class 12'] },
+    { title: 'ARTS', books: ['Class 11', 'Class 12'] }, // Changed from 'ART & CULTURE' to 'ARTS'
   ];
 
   const otherSections = [
@@ -120,9 +120,7 @@ const StudyMaterial = () => {
         </motion.section>
       ))}
 
-      {selectedSubject && (
-        <Popup subject={selectedSubject} onClose={handleClosePopup} />
-      )}
+      {selectedSubject && <Popup subject={selectedSubject} onClose={handleClosePopup} />}
     </div>
   );
 };

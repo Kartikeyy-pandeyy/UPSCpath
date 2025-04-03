@@ -43,7 +43,6 @@ const Dashboard = ({ user, setUser }) => {
       const response = await fetch(`${backendURL}/auth/logout`, {
         method: 'GET',
         credentials: 'include',
-        mode: 'cors',
       });
 
       if (!response.ok) {

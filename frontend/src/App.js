@@ -5,7 +5,7 @@ import Dashboard from './components/Dashboard';
 import LoadingSpinner from './components/LoadingSpinner';
 import './App.css';
 
-const backendURL = process.env.REACT_APP_BACKEND_URL || 'https://upscpath-production.up.railway.app';
+const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000'; // Use local URL for testing
 
 function App() {
   const [user, setUser] = useState(null);
@@ -31,12 +31,13 @@ function App() {
           const userData = await response.json();
           setUser(userData);
           console.log('User authenticated:', userData);
-        } else if (response.status === 401) {
+        } else {
           console.log('User not authenticated');
           setUser(null);
         }
       } catch (error) {
         console.error('Error checking authentication:', error);
+        setUser(null);
       } finally {
         setLoading(false);
         setAuthChecked(true);
@@ -87,6 +88,7 @@ function OAuthCallback() {
       try {
         const response = await fetch(`${backendURL}/auth/me`, {
           credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
         });
 
         if (response.ok) {

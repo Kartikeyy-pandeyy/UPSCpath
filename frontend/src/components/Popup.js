@@ -17,7 +17,7 @@ const Popup = ({ subject, onClose }) => {
     setSelectedBook(book);
   };
 
-  const handleOpenBook = () => {
+  const handleViewBook = () => {
     if (selectedBook) {
       setShowBookViewer(true);
     }
@@ -56,23 +56,23 @@ const Popup = ({ subject, onClose }) => {
           </div>
           <div className="popup-actions">
             <motion.button
-              className="open-btn"
-              onClick={handleOpenBook}
+              className="view-btn"
+              onClick={handleViewBook}
               disabled={!selectedBook}
               whileHover={{ scale: selectedBook ? 1.03 : 1, boxShadow: selectedBook ? '0 4px 12px rgba(0, 0, 0, 0.1)' : 'none' }}
               whileTap={{ scale: selectedBook ? 0.97 : 1 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
             >
-              Open
+              View Book
             </motion.button>
             <motion.button
-              className="close-btn"
+              className="dismiss-btn"
               onClick={onClose}
               whileHover={{ scale: 1.03, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}
               whileTap={{ scale: 0.97 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
             >
-              Close
+              Dismiss
             </motion.button>
           </div>
         </motion.div>

@@ -27,7 +27,7 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  backdrop-filter: blur(2px); /* Subtle blur for polish */
+  backdrop-filter: blur(2px);
 }
 
 .popup-content {
@@ -43,7 +43,7 @@
   flex-direction: column;
   align-items: center;
   gap: clamp(1rem, 2vw, 1.5rem);
-  border: 1px solid var(--neutral-200); /* Subtle border for refinement */
+  border: 1px solid var(--neutral-200);
 }
 
 .popup-title {
@@ -99,9 +99,9 @@
   padding: 0 clamp(0.5rem, 1vw, 1rem) clamp(0.75rem, 1.5vw, 1rem);
 }
 
-.open-btn,
-.close-btn {
-  flex: 1; /* Each button takes equal width */
+.view-btn,
+.dismiss-btn {
+  flex: 1;
   padding: clamp(0.625rem, 1.5vw, 0.875rem);
   border: none;
   border-radius: 8px;
@@ -112,29 +112,29 @@
   box-shadow: var(--shadow-sm);
 }
 
-.open-btn {
+.view-btn {
   background: var(--primary);
   color: white;
 }
 
-.open-btn:hover:not(:disabled) {
+.view-btn:hover:not(:disabled) {
   background: var(--primary-hover);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.open-btn:disabled {
+.view-btn:disabled {
   background: var(--neutral-200);
   color: var(--neutral-700);
   cursor: not-allowed;
   box-shadow: none;
 }
 
-.close-btn {
+.dismiss-btn {
   background: var(--secondary);
   color: white;
 }
 
-.close-btn:hover {
+.dismiss-btn:hover {
   background: var(--secondary-hover);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -159,8 +159,8 @@
     padding: 0 0.5rem 0.75rem;
   }
 
-  .open-btn,
-  .close-btn {
+  .view-btn,
+  .dismiss-btn {
     width: 100%;
   }
 }
@@ -175,8 +175,8 @@
     gap: 0.75rem;
   }
 
-  .open-btn,
-  .close-btn {
+  .view-btn,
+  .dismiss-btn {
     flex: 1;
   }
 }
@@ -191,8 +191,8 @@
     gap: 0.75rem;
   }
 
-  .open-btn,
-  .close-btn {
+  .view-btn,
+  .dismiss-btn {
     flex: 1;
   }
 }

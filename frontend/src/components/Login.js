@@ -1,11 +1,10 @@
-// Login.jsx
 import React from 'react';
 import './Login.css';
 import { FaGoogle, FaBookReader } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
 const Login = () => {
-  const backendURL = process.env.REACT_APP_BACKEND_URL || 'https://upscpath-production.up.railway.app';
+  const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
 
   const handleLogin = () => {
     localStorage.clear();
@@ -13,21 +12,29 @@ const Login = () => {
     window.location.href = `${backendURL}/auth/google`;
   };
 
+  const tabs = [
+    { name: 'about', label: 'About UPSC', icon: 'ℹ️' },
+    { name: 'exam', label: 'Exam Pattern', icon: '📝' },
+    { name: 'summarize', label: 'Summarize Topic', icon: '✂️' },
+    { name: 'material', label: 'Study Material', icon: '📚' },
+    { name: 'faq', label: 'FAQ', icon: '❓' },
+  ];
+
   const containerVariants = {
-    hidden: { opacity: 0, scale: 0.98 },
+    hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
-      scale: 1,
-      transition: { duration: 0.5, ease: 'easeOut' },
+      y: 0,
+      transition: { duration: 0.6, ease: 'easeOut' },
     },
   };
 
   const featureVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, x: -20 },
     visible: {
       opacity: 1,
-      y: 0,
-      transition: { duration: 0.4, ease: 'easeOut' },
+      x: 0,
+      transition: { duration: 0.5, ease: 'easeOut' },
     },
   };
 
@@ -46,23 +53,31 @@ const Login = () => {
             <p className="subtitle">Your AI-Powered UPSC Companion</p>
           </div>
 
-          <div className="features-grid">
-            {[
-              { icon: '📚', text: 'Curated Study Material' },
-              { icon: '⚡', text: 'AI-Driven Insights' },
-              { icon: '🎯', text: 'Targeted Prep' },
-            ].map((feature, index) => (
+          <div className="features-list">
+            {tabs.map((tab, index) => (
               <motion.div
-                key={feature.text}
-                className="feature-card"
+                key={tab.name}
+                className="feature-item"
                 variants={featureVariants}
                 initial="hidden"
                 animate="visible"
-                transition={{ delay: index * 0.2 }}
-                whileHover={{ y: -4, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ 
+                  scale: 1.02, 
+                  boxShadow: '0 6px 12px rgba(37, 99, 235, 0.15)' 
+                }}
               >
-                <span className="feature-icon">{feature.icon}</span>
-                <span className="feature-text">{feature.text}</span>
+                <span className="feature-icon">{tab.icon}</span>
+                <div className="feature-content">
+                  <span className="feature-text">{tab.label}</span>
+                  <span className="feature-subtext">
+                    {tab.name === 'about' && 'Comprehensive UPSC overview'}
+                    {tab.name === 'exam' && 'Detailed exam structure'}
+                    {tab.name === 'summarize' && 'Quick topic insights'}
+                    {tab.name === 'material' && 'Curated resources'}
+                    {tab.name === 'faq' && 'Common questions answered'}
+                  </span>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -70,16 +85,19 @@ const Login = () => {
           <motion.button
             className="login-button"
             onClick={handleLogin}
-            whileHover={{ scale: 1.05, boxShadow: '0 6px 12px rgba(37, 99, 235, 0.2)' }}
+            whileHover={{ 
+              scale: 1.05, 
+              boxShadow: '0 10px 20px rgba(37, 99, 235, 0.3)' 
+            }}
             whileTap={{ scale: 0.95 }}
             transition={{ duration: 0.2 }}
           >
             <FaGoogle className="google-icon" />
-            Sign in with Google
+            Continue with Google
           </motion.button>
 
           <footer className="footer">
-            <p>Crafted with ❤️ by Kartikey Pandey</p>
+            <p>Crafted with <span className="heart">❤️</span> by Kartikey Pandey</p>
           </footer>
         </div>
       </motion.div>

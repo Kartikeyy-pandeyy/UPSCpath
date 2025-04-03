@@ -1,329 +1,329 @@
-/* Dashboard.css */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+  /* Dashboard.css */
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-:root {
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --secondary: #f97316;
-  --secondary-hover: #ea580c;
-  --neutral-50: #f8fafc;
-  --neutral-100: #f1f5f9;
-  --neutral-200: #e2e8f0;
-  --neutral-700: #334155;
-  --neutral-900: #0f172a;
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.1);
-  --radius: 12px;
-  --transition: 0.3s ease;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Inter', sans-serif;
-  line-height: 1.6;
-}
-
-.dashboard-wrapper {
-  min-height: 100vh;
-  background: linear-gradient(145deg, var(--neutral-50), var(--neutral-100));
-  padding: 1rem;
-  display: grid;
-  gap: 1rem;
-}
-
-/* Header */
-.dashboard-header {
-  width: 100%;
-  max-width: 1440px;
-  margin: 0 auto;
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: white;
-  padding: 1rem 1.5rem;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-md);
-  gap: 1rem;
-}
-
-.header-logo {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--primary);
-}
-
-.logo-icon {
-  font-size: 1.75rem;
-}
-
-.header-greeting {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--neutral-900);
-  flex: 1;
-  text-align: center;
-}
-
-.logout-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1.25rem;
-  background: var(--secondary);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.logout-btn:hover {
-  background: var(--secondary-hover);
-}
-
-.logout-icon {
-  font-size: 1rem;
-}
-
-/* Tabs */
-.dashboard-tabs {
-  width: 100%;
-  max-width: 1440px;
-  margin: 0 auto;
-}
-
-.tabs-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  background: white;
-  padding: 0.75rem;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-md);
-  justify-content: center;
-}
-
-.tab-btn {
-  flex: 1;
-  min-width: 120px;
-  padding: 0.75rem 1rem;
-  background: var(--neutral-50);
-  color: var(--neutral-900);
-  border: none;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.tab-btn:hover:not(.active) {
-  background: var(--neutral-100);
-  box-shadow: var(--shadow-sm);
-}
-
-.tab-btn.active {
-  background: var(--primary);
-  color: white;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-}
-
-/* Content */
-.dashboard-content {
-  width: 100%;
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 1.5rem;
-  background: white;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-md);
-  min-height: 60vh;
-}
-
-.content-wrapper {
-  height: 100%;
-}
-
-/* Loading */
-.loading-container {
-  height: 100vh;
-  display: grid;
-  place-items: center;
-  font-size: 1rem;
-  color: var(--neutral-900);
-}
-
-.spinner {
-  animation: spin 1s linear infinite;
-  margin-right: 0.75rem;
-  font-size: 1.5rem;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+  :root {
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --secondary: #f97316;
+    --secondary-hover: #ea580c;
+    --neutral-50: #f8fafc;
+    --neutral-100: #f1f5f9;
+    --neutral-200: #e2e8f0;
+    --neutral-700: #334155;
+    --neutral-900: #0f172a;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.1);
+    --radius: 12px;
+    --transition: 0.3s ease;
   }
-}
 
-/* Responsive Design */
-@media (max-width: 479px) {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+  }
+
   .dashboard-wrapper {
-    padding: 0.5rem;
+    min-height: 100vh;
+    background: linear-gradient(145deg, var(--neutral-50), var(--neutral-100));
+    padding: 1rem;
+    display: grid;
+    gap: 1rem;
+  }
+
+  /* Header */
+  .dashboard-header {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
   }
 
   .header-content {
-    flex-direction: column;
-    padding: 0.75rem;
-    gap: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    gap: 1rem;
   }
 
   .header-logo {
-    font-size: 1.125rem;
-    order: 1; /* Ensure logo is at the top */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary);
   }
 
   .logo-icon {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
   }
 
   .header-greeting {
-    font-size: 1rem;
-    order: 2; /* Greeting below logo */
-  }
-
-  .logout-btn {
-    width: 100%;
-    padding: 0.75rem;
-    order: 3; /* Logout button at the bottom */
-  }
-
-  .tabs-container {
-    padding: 0.5rem;
-    gap: 0.375rem;
-  }
-
-  .tab-btn {
-    min-width: 100%;
-    padding: 0.625rem;
-    font-size: 0.8125rem;
-  }
-
-  .dashboard-content {
-    padding: 1rem;
-  }
-}
-
-@media (min-width: 480px) and (max-width: 767px) {
-  .header-content {
-    padding: 1rem;
-  }
-
-  .header-logo {
     font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--neutral-900);
+    flex: 1;
+    text-align: center;
   }
 
-  .header-greeting {
-    font-size: 1.125rem;
-  }
-
-  .tabs-container {
+  .logout-btn {
+    display: flex;
+    align-items: center;
     gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: var(--secondary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
   }
 
-  .tab-btn {
-    min-width: 140px;
+  .logout-btn:hover {
+    background: var(--secondary-hover);
   }
 
-  .dashboard-content {
-    padding: 1.25rem;
-  }
-}
-
-@media (min-width: 768px) {
-  .header-content {
-    padding: 1.25rem 1.5rem;
-  }
-
-  .header-logo {
-    font-size: 1.5rem;
-  }
-
-  .header-greeting {
-    font-size: 1.5rem;
-  }
-
-  .logout-btn {
-    padding: 0.75rem 1.5rem;
+  .logout-icon {
     font-size: 1rem;
+  }
+
+  /* Tabs */
+  .dashboard-tabs {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
   }
 
   .tabs-container {
-    padding: 1rem;
-    gap: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    background: white;
+    padding: 0.75rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    justify-content: center;
   }
 
   .tab-btn {
-    min-width: 160px;
-    padding: 0.875rem;
+    flex: 1;
+    min-width: 120px;
+    padding: 0.75rem 1rem;
+    background: var(--neutral-50);
+    color: var(--neutral-900);
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+
+  .tab-btn:hover:not(.active) {
+    background: var(--neutral-100);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .tab-btn.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  }
+
+  /* Content */
+  .dashboard-content {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    min-height: 60vh;
+  }
+
+  .content-wrapper {
+    height: 100%;
+  }
+
+  /* Loading */
+  .loading-container {
+    height: 100vh;
+    display: grid;
+    place-items: center;
     font-size: 1rem;
+    color: var(--neutral-900);
   }
 
-  .dashboard-content {
-    padding: 1.5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .dashboard-wrapper {
-    padding: 1.5rem;
+  .spinner {
+    animation: spin 1s linear infinite;
+    margin-right: 0.75rem;
+    font-size: 1.5rem;
   }
 
-  .header-greeting {
-    font-size: 1.75rem;
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
 
-  .tab-btn {
-    min-width: 180px;
-    padding: 1rem;
+  /* Responsive Design */
+  @media (max-width: 479px) {
+    .dashboard-wrapper {
+      padding: 0.5rem;
+    }
+
+    .header-content {
+      flex-direction: column;
+      padding: 0.75rem;
+      gap: 0.75rem;
+    }
+
+    .header-logo {
+      font-size: 1.125rem;
+      order: 1; /* Ensure logo is at the top */
+    }
+
+    .logo-icon {
+      font-size: 1.5rem;
+    }
+
+    .header-greeting {
+      font-size: 1rem;
+      order: 2; /* Greeting below logo */
+    }
+
+    .logout-btn {
+      width: 100%;
+      padding: 0.75rem;
+      order: 3; /* Logout button at the bottom */
+    }
+
+    .tabs-container {
+      padding: 0.5rem;
+      gap: 0.375rem;
+    }
+
+    .tab-btn {
+      min-width: 100%;
+      padding: 0.625rem;
+      font-size: 0.8125rem;
+    }
+
+    .dashboard-content {
+      padding: 1rem;
+    }
   }
 
-  .dashboard-content {
-    padding: 2rem;
-  }
-}
+  @media (min-width: 480px) and (max-width: 767px) {
+    .header-content {
+      padding: 1rem;
+    }
 
-@media (min-width: 1280px) {
-  .dashboard-wrapper {
-    padding: 2rem;
+    .header-logo {
+      font-size: 1.25rem;
+    }
+
+    .header-greeting {
+      font-size: 1.125rem;
+    }
+
+    .tabs-container {
+      gap: 0.5rem;
+    }
+
+    .tab-btn {
+      min-width: 140px;
+    }
+
+    .dashboard-content {
+      padding: 1.25rem;
+    }
   }
 
-  .header-logo {
-    font-size: 1.75rem;
+  @media (min-width: 768px) {
+    .header-content {
+      padding: 1.25rem 1.5rem;
+    }
+
+    .header-logo {
+      font-size: 1.5rem;
+    }
+
+    .header-greeting {
+      font-size: 1.5rem;
+    }
+
+    .logout-btn {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+    }
+
+    .tabs-container {
+      padding: 1rem;
+      gap: 0.75rem;
+    }
+
+    .tab-btn {
+      min-width: 160px;
+      padding: 0.875rem;
+      font-size: 1rem;
+    }
+
+    .dashboard-content {
+      padding: 1.5rem;
+    }
   }
 
-  .header-greeting {
-    font-size: 2rem;
+  @media (min-width: 1024px) {
+    .dashboard-wrapper {
+      padding: 1.5rem;
+    }
+
+    .header-greeting {
+      font-size: 1.75rem;
+    }
+
+    .tab-btn {
+      min-width: 180px;
+      padding: 1rem;
+    }
+
+    .dashboard-content {
+      padding: 2rem;
+    }
   }
 
-  .logout-btn {
-    padding: 0.875rem 1.75rem;
-  }
+  @media (min-width: 1280px) {
+    .dashboard-wrapper {
+      padding: 2rem;
+    }
 
-  .tab-btn {
-    min-width: 200px;
-    font-size: 1.125rem;
+    .header-logo {
+      font-size: 1.75rem;
+    }
+
+    .header-greeting {
+      font-size: 2rem;
+    }
+
+    .logout-btn {
+      padding: 0.875rem 1.75rem;
+    }
+
+    .tab-btn {
+      min-width: 200px;
+      font-size: 1.125rem;
+    }
   }
-}

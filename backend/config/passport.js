@@ -7,7 +7,7 @@ require('dotenv').config();
 const callbackURL =
   process.env.NODE_ENV === 'production'
     ? process.env.CALLBACK_URL_PROD
-    : process.env.CALLBACK_URL_DEV;
+    : process.env.CALLBACK_URL_DEV || 'http://localhost:5000/auth/google/callback';
 
 passport.use(
   new GoogleStrategy(
@@ -41,20 +41,17 @@ passport.use(
   )
 );
 
-// Serialize user
+// Serialize user into session
 passport.serializeUser((user, done) => {
-  console.log('Serializing user:', user.id);
-  done(null, { 
-    id: user.id,
-    googleId: user.googleId 
-  });
+  console.log('Serializing user:', user._id); // Use _id for MongoDB
+  done(null, user._id); // Store only the MongoDB _id in the session
 });
 
-// Deserialize user
-passport.deserializeUser(async (obj, done) => {
+// Deserialize user from session
+passport.deserializeUser(async (id, done) => {
   try {
-    console.log('Deserializing user with ID:', obj.id);
-    const user = await User.findById(obj.id);
+    console.log('Deserializing user with ID:', id);
+    const user = await User.findById(id);
     if (!user) {
       console.log('User not found');
       return done(null, false);
@@ -63,7 +60,7 @@ passport.deserializeUser(async (obj, done) => {
     return done(null, user);
   } catch (error) {
     console.error('Deserialization error:', error);
-    return done(error);
+    return done(error, null);
   }
 });
 

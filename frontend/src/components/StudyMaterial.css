@@ -58,7 +58,7 @@
   padding: 1.5rem;
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
-  transition: var(--transition);
+  transition: all var(--transition); /* Added 'all' for smoother transitions */
   display: flex;
   flex-direction: column;
   border-top: 4px solid var(--primary);
@@ -97,11 +97,12 @@
   font-size: clamp(0.8125rem, 2vw, 0.875rem);
   font-weight: 500;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all var(--transition);
 }
 
 .view-content-btn:hover {
   background: var(--primary-hover);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Added shadow for polish */
 }
 
 .coming-soon-section {
