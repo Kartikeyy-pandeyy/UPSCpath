@@ -142,7 +142,7 @@ app.get('/book-url', async (req, res) => {
   console.log('Generated S3 key:', key);
 
   const params = {
-    Bucket: 'path-study-material',
+    Bucket: 'path-study-materials',
     Key: key,
     Expires: 3600,
   };
