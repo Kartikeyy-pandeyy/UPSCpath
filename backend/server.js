@@ -1,14 +1,14 @@
+require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const cors = require('cors');
+const { getViews, incrementViews } = require("./portfolio"); 
 const passport = require('./config/passport');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const summaryRoutes = require('./routes/summaryRoutes');
 const AWS = require('aws-sdk');
-require('dotenv').config();
-
 const app = express();
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -16,12 +16,28 @@ const isProduction = process.env.NODE_ENV === 'production';
 app.use(express.json());
 
 // CORS configuration
+const allowlist = process.env.NODE_ENV === "production"
+  ? [
+      "https://upscpath.netlify.app",
+      "https://kartikeyypandeyy.netlify.app", // your portfolio prod
+    ]
+  : [
+      "http://localhost:3000",
+      "http://127.0.0.1:3000",
+      "http://localhost:5173",
+      "http://127.0.0.1:5173",
+    ];
+
 app.use(
   cors({
-    origin: isProduction ? 'https://upscpath.netlify.app' : 'http://localhost:3000',
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // server-to-server or curl
+      if (allowlist.includes(origin)) return callback(null, true);
+      return callback(new Error("Not allowed by CORS: " + origin));
+    },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -83,6 +99,31 @@ app.use(passport.session());
 // Routes
 app.use('/auth', authRoutes);
 app.use('/summary', summaryRoutes);
+
+
+// Global views counter API
+app.get("/api/views", async (req, res) => {
+  try {
+    const total = await getViews();
+    res.json({ total });
+  } catch (err) {
+    console.error("GET /api/views error:", err);
+    res.status(500).json({ error: "Failed to fetch views" });
+  }
+});
+
+app.post("/api/views", async (req, res) => {
+  try {
+    const total = await incrementViews();
+    res.json({ total });
+  } catch (err) {
+    console.error("POST /api/views error:", err);
+    res.status(500).json({ error: "Failed to increment views" });
+  }
+});
+
+
+
 
 // Logout route
 app.get('/auth/logout', (req, res) => {
