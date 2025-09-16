@@ -196,7 +196,9 @@ app.get('/book-url', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch book URL', details: err.message });
   }
 });
-
+app.get('/api/ping', (req, res) => {
+  res.status(200).send('OK');
+});
 // Handle Polly synthesis
 app.post('/synthesize-speech', async (req, res) => {
   const { text } = req.body;
