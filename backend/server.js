@@ -31,7 +31,7 @@ const allowlist = process.env.NODE_ENV === "production"
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin) return callback(null, true); // server-to-server or curl
+      if (!origin) return callback(null, true);
       if (allowlist.includes(origin)) return callback(null, true);
       return callback(new Error("Not allowed by CORS: " + origin));
     },
@@ -43,32 +43,27 @@ app.use(
 
 app.set('trust proxy', 1);
 
-// Connect to MongoDB
+// DB first
 connectDB();
 
-// Configure AWS SDK
+// AWS SDK config (unchanged)
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   region: 'us-east-1',
 });
-
 const s3 = new AWS.S3();
 const polly = new AWS.Polly();
 
-// Session store setup
+// Sessions BEFORE passport
 const sessionStore = MongoStore.create({
   mongoUrl: process.env.MONGO_URI,
   collectionName: 'sessions',
   ttl: 24 * 60 * 60,
   autoRemove: 'native',
 });
+sessionStore.on('error', (error) => console.error('Session store error:', error));
 
-sessionStore.on('error', (error) => {
-  console.error('Session store error:', error);
-});
-
-// Session middleware
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -76,85 +71,65 @@ app.use(
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      secure: isProduction ? true : false, // Ensure secure is explicitly false in dev
+      secure: isProduction ? true : false,
       httpOnly: true,
-      sameSite: isProduction ? 'none' : 'lax', // 'none' requires secure: true in production
+      sameSite: isProduction ? 'none' : 'lax',
       maxAge: 24 * 60 * 60 * 1000,
     },
   })
 );
 
-// Debug session
+// Initialize Passport AFTER session
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Debug AFTER passport so req.user is populated
 app.use((req, res, next) => {
   console.log('Session ID:', req.sessionID);
-  console.log('Session:', req.session);
   console.log('User:', req.user);
   next();
 });
-
-// Initialize Passport
-app.use(passport.initialize());
-app.use(passport.session());
 
 // Routes
 app.use('/auth', authRoutes);
 app.use('/summary', summaryRoutes);
 
+// Simple healthcheck BEFORE 404
+app.get('/api/ping', (req, res) => {
+  res.status(200).send('OK');
+});
 
-// Global views counter API
+// Views counters (unchanged)
 app.get("/api/views", async (req, res) => {
-  try {
-    const total = await getViews();
-    res.json({ total });
-  } catch (err) {
-    console.error("GET /api/views error:", err);
-    res.status(500).json({ error: "Failed to fetch views" });
-  }
+  try { const total = await getViews(); res.json({ total }); }
+  catch (err) { console.error("GET /api/views error:", err); res.status(500).json({ error: "Failed to fetch views" }); }
 });
-
 app.post("/api/views", async (req, res) => {
-  try {
-    const total = await incrementViews();
-    res.json({ total });
-  } catch (err) {
-    console.error("POST /api/views error:", err);
-    res.status(500).json({ error: "Failed to increment views" });
-  }
+  try { const total = await incrementViews(); res.json({ total }); }
+  catch (err) { console.error("POST /api/views error:", err); res.status(500).json({ error: "Failed to increment views" }); }
 });
 
-
-
-
-// Logout route
+// Logout (unchanged)
 app.get('/auth/logout', (req, res) => {
   req.logout((err) => {
-    if (err) {
-      return res.status(500).json({ message: 'Logout failed', error: err.message });
-    }
-
+    if (err) return res.status(500).json({ message: 'Logout failed', error: err.message });
     req.session.destroy((err) => {
-      if (err) {
-        return res.status(500).json({ message: 'Failed to destroy session', error: err.message });
-      }
-
+      if (err) return res.status(500).json({ message: 'Failed to destroy session', error: err.message });
       res.clearCookie('connect.sid', {
         path: '/',
         httpOnly: true,
         secure: isProduction,
         sameSite: isProduction ? 'none' : 'lax',
       });
-
       return res.status(200).json({ message: 'Logged out successfully' });
     });
   });
 });
 
-// Fetch signed URL for PDF
+// Signed URL builder — add hyphen for Part I/II/III
 app.get('/book-url', async (req, res) => {
   const { book } = req.query;
   if (!book) return res.status(400).json({ error: 'Book parameter is required' });
-
-  console.log('Received book parameter:', book);
 
   const parts = book.split(' ');
   if (parts.length < 2) return res.status(400).json({ error: 'Invalid book format' });
@@ -171,47 +146,32 @@ app.get('/book-url', async (req, res) => {
   let suffix = '';
   if (suffixRaw) {
     if (suffixRaw.startsWith('Part')) {
-      const partNumber = parseInt(suffixRaw.replace('Part ', ''), 10);
+      const partNumber = parseInt(classMatch[3], 10);
       const romanMap = { 1: 'i', 2: 'ii', 3: 'iii' };
-      suffix = romanMap[partNumber] || '';
+      const roman = romanMap[partNumber] || '';
+      suffix = roman ? `-${roman}` : '';   // <-- hyphen added here
     } else {
-      suffix = `-${suffixRaw.toLowerCase()}`;
+      suffix = `-${suffixRaw.toLowerCase()}`; // -india / -world
     }
   }
 
   const key = `NCERT/${subject}/${classNumber}${suffix}.pdf`;
-  console.log('Generated S3 key:', key);
-
-  const params = {
-    Bucket: 'path-study-materials',
-    Key: key,
-    Expires: 3600,
-  };
 
   try {
-    const url = await s3.getSignedUrlPromise('getObject', params);
+    const url = await s3.getSignedUrlPromise('getObject', { Bucket: 'path-study-materials', Key: key, Expires: 3600 });
     res.json({ url });
   } catch (err) {
     console.error('Error generating signed URL:', err);
     res.status(500).json({ error: 'Failed to fetch book URL', details: err.message });
   }
 });
-app.get('/api/ping', (req, res) => {
-  res.status(200).send('OK');
-});
-// Handle Polly synthesis
+
+// Polly (unchanged)
 app.post('/synthesize-speech', async (req, res) => {
   const { text } = req.body;
   if (!text) return res.status(400).json({ error: 'Text is required' });
-
-  const params = {
-    Text: text,
-    OutputFormat: 'mp3',
-    VoiceId: 'Joanna',
-  };
-
   try {
-    const data = await polly.synthesizeSpeech(params).promise();
+    const data = await polly.synthesizeSpeech({ Text: text, OutputFormat: 'mp3', VoiceId: 'Joanna' }).promise();
     res.set('Content-Type', 'audio/mp3');
     res.send(data.AudioStream);
   } catch (error) {
@@ -220,13 +180,18 @@ app.post('/synthesize-speech', async (req, res) => {
   }
 });
 
-// Error handling middleware
+// 404 handler AFTER all routes
+app.use((req, res) => {
+  res.status(404).json({ error: "API route not found" });
+});
+
+// Error handler LAST
 app.use((err, req, res, next) => {
   console.error('Server error:', err.stack);
   res.status(500).json({ error: 'Something went wrong on the server', details: err.message });
 });
 
-// Start server
+// Listen
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
   console.log(`🚀 Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`)
